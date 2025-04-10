@@ -1,0 +1,187 @@
+import json
+import pandas as pd
+from datetime import datetime
+
+def clean_news_data(json_data):
+    """
+    JSON 형식의 뉴스 데이터를 파싱하고 정리하는 함수
+    
+    Args:
+        json_data (str): JSON 형식의 뉴스 데이터 문자열
+    
+    Returns:
+        pd.DataFrame: 정리된 뉴스 데이터를 담은 데이터프레임
+    """
+    try:
+        # 문자열에서 실제 JSON 부분 추출
+        start_idx = json_data.find('{')
+        end_idx = json_data.rfind('}') + 1
+        if start_idx == -1 or end_idx == 0:
+            raise ValueError("유효한 JSON 데이터를 찾을 수 없습니다.")
+        
+        json_str = json_data[start_idx:end_idx]
+        data = json.loads(json_str)
+        
+        # 뉴스 기사 목록 추출
+        articles = data.get('articles', [])
+        
+        # 필요한 데이터 필드 추출
+        cleaned_data = []
+        for article in articles:
+            source_name = article.get('source', {}).get('name', '')
+            author = article.get('author', '')
+            title = article.get('title', '')
+            description = article.get('description', '')
+            url = article.get('url', '')
+            published_at = article.get('publishedAt', '')
+            
+            # 날짜 포맷 변환
+            try:
+                if published_at:
+                    date_obj = datetime.strptime(published_at, '%Y-%m-%dT%H:%M:%SZ')
+                    formatted_date = date_obj.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    formatted_date = ''
+            except ValueError:
+                formatted_date = published_at
+            
+            # 데이터 사전 생성
+            article_data = {
+                'source': source_name,
+                'author': author,
+                'title': title,
+                'description': description,
+                'url': url,
+                'published_date': formatted_date
+            }
+            
+            cleaned_data.append(article_data)
+        
+        # 데이터프레임 생성
+        df = pd.DataFrame(cleaned_data)
+        
+        return df
+    
+    except json.JSONDecodeError as e:
+        print(f"JSON 파싱 오류: {e}")
+        return pd.DataFrame()
+    except Exception as e:
+        print(f"데이터 처리 중 오류 발생: {e}")
+        return pd.DataFrame()
+
+def save_to_formats(df, base_filename):
+    """
+    데이터프레임을 여러 형식으로 저장하는 함수
+    
+    Args:
+        df (pd.DataFrame): 저장할 데이터프레임
+        base_filename (str): 저장할 파일의 기본 이름
+    """
+    # CSV 형식으로 저장
+    df.to_csv(f"{base_filename}.csv", index=False, encoding='utf-8-sig')
+    
+    # Excel 형식으로 저장
+    df.to_excel(f"{base_filename}.xlsx", index=False)
+    
+    # HTML 형식으로 저장
+    html_content = df.to_html(index=False)
+    with open(f"{base_filename}.html", 'w', encoding='utf-8') as f:
+        f.write(f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>뉴스 데이터</title>
+            <style>
+                table {{ border-collapse: collapse; width: 100%; }}
+                th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }}
+                th {{ background-color: #f2f2f2; }}
+                tr:hover {{ background-color: #f5f5f5; }}
+            </style>
+        </head>
+        <body>
+            <h1>뉴스 데이터 정리</h1>
+            <p>생성 일시: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            {html_content}
+        </body>
+        </html>
+        """)
+
+def analyze_news_data(df):
+    """
+    뉴스 데이터에 대한 간단한 분석 정보를 제공하는 함수
+    
+    Args:
+        df (pd.DataFrame): 뉴스 데이터 데이터프레임
+    
+    Returns:
+        dict: 분석 결과
+    """
+    if df.empty:
+        return {"error": "데이터가 비어 있습니다."}
+    
+    analysis = {
+        "total_articles": len(df),
+        "sources_count": df['source'].nunique(),
+        "top_sources": df['source'].value_counts().head(5).to_dict(),
+        "authors_count": df['author'].nunique(),
+        "top_authors": df['author'].value_counts().head(5).to_dict()
+    }
+    
+    # 날짜별 기사 수 계산
+    if 'published_date' in df.columns:
+        df['date_only'] = df['published_date'].str.split(' ').str[0]
+        date_counts = df['date_only'].value_counts().to_dict()
+        analysis["articles_by_date"] = date_counts
+    
+    return analysis
+
+def main(input_file, output_base_filename):
+    """
+    메인 함수: 파일에서 데이터를 읽고 처리하여 저장
+    
+    Args:
+        input_file (str): 입력 파일 경로
+        output_base_filename (str): 출력 파일의 기본 이름
+    """
+    try:
+        # 파일에서 데이터 읽기
+        with open(input_file, 'r', encoding='utf-8') as f:
+            json_data = f.read()
+        
+        # 데이터 정리
+        df = clean_news_data(json_data)
+        
+        if df.empty:
+            print("데이터 처리 실패 또는 유효한 뉴스 기사가 없습니다.")
+            return
+        
+        # 데이터 저장
+        save_to_formats(df, output_base_filename)
+        
+        # 데이터 분석
+        analysis = analyze_news_data(df)
+        
+        # 분석 결과 출력 및 저장
+        print("\n===== 뉴스 데이터 분석 결과 =====")
+        for key, value in analysis.items():
+            print(f"{key}: {value}")
+        
+        # 분석 결과를 JSON으로 저장
+        with open(f"{output_base_filename}_analysis.json", 'w', encoding='utf-8') as f:
+            json.dump(analysis, f, ensure_ascii=False, indent=4)
+        
+        print(f"\n처리 완료! 파일이 저장되었습니다: {output_base_filename}.csv, {output_base_filename}.xlsx, {output_base_filename}.html, {output_base_filename}_analysis.json")
+    
+    except FileNotFoundError:
+        print(f"파일을 찾을 수 없습니다: {input_file}")
+    except Exception as e:
+        print(f"실행 중 오류 발생: {e}")
+
+# 사용 예시
+if __name__ == "__main__":
+    # 입력 파일 경로와 출력 파일 기본 이름 설정
+    input_file = "news_data.txt"
+    output_base_filename = "processed_news_data"
+    
+    main(input_file, output_base_filename)
