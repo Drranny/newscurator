@@ -4,12 +4,10 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.identity.IdentityColumnSupport;
 import org.hibernate.dialect.identity.IdentityColumnSupportImpl;
 import org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfo;
+import org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfoSource;
 
 public class SQLiteDialect extends Dialect {
 
-    public SQLiteDialect() {
-        super();
-    }
 
     public SQLiteDialect(DialectResolutionInfo info) {
         super(info);

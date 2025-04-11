@@ -74,6 +74,14 @@ public class NewsApiService {
                     recommendedArticle.setSourceName(source.path("name").asText());
                 }
 
+                // Set recommendedAt field (required)
+                recommendedArticle.setRecommendedAt(LocalDateTime.now());
+                
+                // AI 관련 기사라는 이유 설정
+                recommendedArticle.setReason("AI/인공지능 관련 뉴스");
+                recommendedArticle.setCategory("AI/Technology");
+                recommendedArticle.setKeywords("AI,인공지능,Technology");
+
                 // 새로운 추천 기사 리스트에 추가
                 newArticles.add(recommendedArticle);
             }
