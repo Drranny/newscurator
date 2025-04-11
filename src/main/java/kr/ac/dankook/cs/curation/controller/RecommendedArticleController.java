@@ -1,38 +1,43 @@
 package kr.ac.dankook.cs.curation.controller;
 
-import kr.ac.dankook.cs.curation.model.RecommendedArticle;
+import kr.ac.dankook.cs.curation.entity.RecommendedArticle;
 import kr.ac.dankook.cs.curation.service.RecommendedArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/articles")
+@RequestMapping("/api/recommended")
 public class RecommendedArticleController {
 
     private final RecommendedArticleService service;
 
-    @Autowired
     public RecommendedArticleController(RecommendedArticleService service) {
         this.service = service;
     }
 
-    // 모든 추천 기사 가져오기
-    @GetMapping
-    public List<RecommendedArticle> getAllArticles() {
-        return service.getAllRecommendedArticles();
-    }
-
-    // 기사 저장
     @PostMapping
-    public RecommendedArticle addArticle(@RequestBody RecommendedArticle article) {
-        return service.saveRecommendedArticle(article);
+    public ResponseEntity<RecommendedArticle> addArticle(@RequestBody RecommendedArticle article) {
+        RecommendedArticle saved = service.saveIfNotExists(article);
+        return ResponseEntity.ok(saved);
     }
 
-    // 특정 ID의 기사 가져오기
+    @GetMapping
+    public ResponseEntity<List<RecommendedArticle>> getAllArticles() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
     @GetMapping("/{id}")
-    public RecommendedArticle getArticle(@PathVariable Long id) {
-        return service.getArticleById(id).orElse(null);
+    public ResponseEntity<RecommendedArticle> getById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

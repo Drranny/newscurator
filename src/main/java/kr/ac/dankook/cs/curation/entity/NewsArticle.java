@@ -1,4 +1,4 @@
-package kr.ac.dankook.cs.curation.model;
+package kr.ac.dankook.cs.curation.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

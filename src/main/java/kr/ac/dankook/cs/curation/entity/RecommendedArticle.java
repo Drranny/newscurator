@@ -1,4 +1,4 @@
-package kr.ac.dankook.cs.curation.model;
+package kr.ac.dankook.cs.curation.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class RecommendedArticle {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, unique = true, length = 2083)
+    @Column(nullable = false, unique = true, columnDefinition = "TEXT") // 변경됨
     private String url;
 
     private String author;

@@ -1,10 +1,10 @@
 package kr.ac.dankook.cs.curation.service;
 
-import kr.ac.dankook.cs.curation.model.RecommendedArticle;
+import kr.ac.dankook.cs.curation.entity.RecommendedArticle;
 import kr.ac.dankook.cs.curation.repository.RecommendedArticleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,23 +13,28 @@ public class RecommendedArticleService {
 
     private final RecommendedArticleRepository repository;
 
-    @Autowired
     public RecommendedArticleService(RecommendedArticleRepository repository) {
         this.repository = repository;
     }
 
-    // 기사 저장
-    public RecommendedArticle saveRecommendedArticle(RecommendedArticle article) {
+    public RecommendedArticle saveIfNotExists(RecommendedArticle article) {
+        Optional<RecommendedArticle> existing = repository.findByUrl(article.getUrl());
+        if (existing.isPresent()) {
+            return existing.get(); // 이미 저장된 기사
+        }
+        article.setRecommendedAt(LocalDateTime.now());
         return repository.save(article);
     }
 
-    // 모든 기사 가져오기
-    public List<RecommendedArticle> getAllRecommendedArticles() {
+    public List<RecommendedArticle> findAll() {
         return repository.findAll();
     }
 
-    // ID로 기사 검색
-    public Optional<RecommendedArticle> getArticleById(Long id) {
+    public Optional<RecommendedArticle> findById(Long id) {
         return repository.findById(id);
+    }
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
     }
 }

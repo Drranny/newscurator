@@ -2,7 +2,9 @@ package kr.ac.dankook.cs.curation.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import kr.ac.dankook.cs.curation.model.NewsArticle;
+
+import kr.ac.dankook.cs.curation.entity.NewsArticle;
+
 import java.util.List;
 
 @Repository
