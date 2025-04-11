@@ -14,3 +14,8 @@ curation
 
 jar/17
 
+
+### 뉴스 수집 기능
+- NewsAPI를 호출해 AI 관련 뉴스 수집
+- 중복 기사 제거 후 DB에 저장
+- 수집된 뉴스는 `/api/recommended` 또는 `/api/news/{category}`로 조회 가능
