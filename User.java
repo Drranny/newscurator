@@ -1,8 +1,12 @@
-package ac.kr.dankook.example;
+package ac.kr.dankook.project.Data;
+
+import java.util.Date;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 // 실질적으로 DB에 연동해서 사용할 Model(DAO)
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -27,6 +31,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private String refreshToken;          // refreshToken은 수명이 길기 때문에 따로 관리
+    private Date refreshTokenExpiry;
+
     // 모든 필드를 가지는 Constructor
     public User(String id, String email, String nickname, String password) {
         this.id = id;
@@ -35,8 +42,11 @@ public class User {
         this.password = password;  
     }
 
-    // Getter & Setter, Id는 변경할 수 없도록 Getter만 생성
+    // Getter & Setter, userNum은 변경할 수 없도록 Getter만 생성
+    public Long getUsernum() { return usernum; }
+
     public String getId() { return id; }
+    public void setId(String id) { this.id = id;}
 
     public String getUsername() { return email; }
     public void setUsername(String username) { this.email = username; }
@@ -46,4 +56,10 @@ public class User {
 
     public String getNickname() { return nickname; }
     public void setNickname(String nickname) { this.nickname = nickname; }
+
+    public String getRefreshToken() { return refreshToken; }
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
+
+    public Date getRefreshTokenExpiry() { return refreshTokenExpiry; }
+    public void setRefreshTokenExpiry(Date refreshTokenExpiry) { this.refreshTokenExpiry = refreshTokenExpiry; }
 }
