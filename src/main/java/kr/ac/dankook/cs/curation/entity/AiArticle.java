@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
  * - DB 테이블명: recommended_articles
  */
 @Entity
-@Table(name = "recommended_articles")
+@Table(name = "Ai_articles")
 @Data // Lombok: getter, setter, toString, equals, hashCode 자동 생성
-public class RecommendedArticle {
+public class AiArticle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment 기본키

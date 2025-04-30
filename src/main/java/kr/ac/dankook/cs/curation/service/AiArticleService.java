@@ -1,7 +1,7 @@
 package kr.ac.dankook.cs.curation.service;
 
-import kr.ac.dankook.cs.curation.entity.RecommendedArticle;
-import kr.ac.dankook.cs.curation.repository.RecommendedArticleRepository;
+import kr.ac.dankook.cs.curation.entity.AiArticle;
+import kr.ac.dankook.cs.curation.repository.AiArticleRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,12 +13,12 @@ import java.util.Optional;
  * - 중복 방지 저장, 조회, 삭제 등의 기능 제공
  */
 @Service
-public class RecommendedArticleService {
+public class AiArticleService {
 
-    private final RecommendedArticleRepository repository;
+    private final AiArticleRepository repository;
 
     // 생성자 주입
-    public RecommendedArticleService(RecommendedArticleRepository repository) {
+    public AiArticleService(AiArticleRepository repository) {
         this.repository = repository;
     }
 
@@ -28,8 +28,8 @@ public class RecommendedArticleService {
      * @param article 저장할 기사
      * @return 저장된 또는 기존에 존재하는 기사
      */
-    public RecommendedArticle saveIfNotExists(RecommendedArticle article) {
-        Optional<RecommendedArticle> existing = repository.findByUrl(article.getUrl());
+    public AiArticle saveIfNotExists(AiArticle article) {
+        Optional<AiArticle> existing = repository.findByUrl(article.getUrl());
         if (existing.isPresent()) {
             return existing.get(); // 이미 저장되어 있으면 해당 기사 반환
         }
@@ -40,14 +40,14 @@ public class RecommendedArticleService {
     /**
      * 모든 추천 기사 목록 반환
      */
-    public List<RecommendedArticle> findAll() {
+    public List<AiArticle> findAll() {
         return repository.findAll();
     }
 
     /**
      * ID로 추천 기사 단건 조회
      */
-    public Optional<RecommendedArticle> findById(Long id) {
+    public Optional<AiArticle> findById(Long id) {
         return repository.findById(id);
     }
 

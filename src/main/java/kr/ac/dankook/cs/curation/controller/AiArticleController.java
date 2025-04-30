@@ -1,7 +1,7 @@
 package kr.ac.dankook.cs.curation.controller;
 
-import kr.ac.dankook.cs.curation.entity.RecommendedArticle;
-import kr.ac.dankook.cs.curation.service.RecommendedArticleService;
+import kr.ac.dankook.cs.curation.entity.AiArticle;
+import kr.ac.dankook.cs.curation.service.AiArticleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,12 +13,12 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/recommended") // API 기본 경로: /api/recommended
-public class RecommendedArticleController {
+public class AiArticleController {
 
-    private final RecommendedArticleService service;
+    private final AiArticleService service;
 
     // 생성자 주입 방식
-    public RecommendedArticleController(RecommendedArticleService service) {
+    public AiArticleController(AiArticleService service) {
         this.service = service;
     }
 
@@ -29,8 +29,8 @@ public class RecommendedArticleController {
      * @return 저장된 기사 정보 반환
      */
     @PostMapping
-    public ResponseEntity<RecommendedArticle> addArticle(@RequestBody RecommendedArticle article) {
-        RecommendedArticle saved = service.saveIfNotExists(article);
+    public ResponseEntity<AiArticle> addArticle(@RequestBody AiArticle article) {
+        AiArticle saved = service.saveIfNotExists(article);
         return ResponseEntity.ok(saved); // HTTP 200 + 저장된 객체
     }
 
@@ -40,7 +40,7 @@ public class RecommendedArticleController {
      * @return 기사 리스트 반환
      */
     @GetMapping
-    public ResponseEntity<List<RecommendedArticle>> getAllArticles() {
+    public ResponseEntity<List<AiArticle>> getAllArticles() {
         return ResponseEntity.ok(service.findAll());
     }
 
@@ -51,7 +51,7 @@ public class RecommendedArticleController {
      * @return 존재 시 기사 반환, 없으면 404
      */
     @GetMapping("/{id}")
-    public ResponseEntity<RecommendedArticle> getById(@PathVariable Long id) {
+    public ResponseEntity<AiArticle> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build()); // 404 처리
