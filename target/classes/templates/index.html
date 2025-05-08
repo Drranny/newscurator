@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>뉴스 큐레이션</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 0;
+      margin: 0;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 30px;
+    }
+    
+    h1, h2, h3 {
+      margin: 0;
+    }
+    
+    .login-box {
+      float: right;
+      padding: 10px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: -50px;
+    }
+    
+    .keywords {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0 30px;
+    }
+    
+    .keyword-btn {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: 2px solid #e74c3c;
+      border-radius: 5px;
+      background: white;
+      color: #e74c3c;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .keyword-btn:hover, .keyword-btn.active {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .section-title {
+      border-left: 5px solid #e74c3c;
+      padding-left: 10px;
+      margin: 30px 0 15px;
+    }
+    
+    .top-news {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    
+    .top-news-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    .top-news-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+    }
+    
+    .top-news-item:last-child {
+      border-bottom: none;
+    }
+    
+    .rank {
+      font-size: 18px;
+      font-weight: bold;
+      color: #e74c3c;
+      width: 30px;
+    }
+    
+    .news-content {
+      flex-grow: 1;
+    }
+    
+    .views {
+      color: #999;
+      font-size: 14px;
+    }
+    
+    .news-card {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      background: white;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .news-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .news-card h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    
+    .news-card p {
+      color: #666;
+      margin-bottom: 0;
+    }
+    
+    .category-tag {
+      display: inline-block;
+      background: #eee;
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    
+    .analytics-tab {
+      background: #34495e;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.3s;
+    }
+    
+    .analytics-tab:hover {
+      background: #2c3e50;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      border-top: 1px solid #eee;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📰 뉴스 큐레이션</h1>
+      <div class="login-box">
+        Login <br>
+        회원가입
+      </div>
+    </header>
+    
+    <!-- 키워드 선택 섹션 -->
+    <div class="keywords">
+      <button class="keyword-btn" onclick="filterByKeyword('보안')">보안</button>
+      <a href="/articles/ai">
+        <button class="keyword-btn">AI</button>  <!--일단 ai만 이렇게 바꿔봄-->
+      </a>
+      
+      <button class="keyword-btn" onclick="filterByKeyword('데이터')">데이터</button>
+      <button class="keyword-btn" onclick="filterByKeyword('하드웨어')">하드웨어</button>
+    </div>
+    
+    <!-- 조회수 TOP 5 섹션 -->
+    <h2 class="section-title">조회수 TOP 5</h2>
+    <div class="top-news">
+      <ul class="top-news-list">
+        <li class="top-news-item" onclick="location.href='/detail?id=5'">
+          <span class="rank">1</span>
+          <div class="news-content">
+            <h3>삼성전자, 새로운 메모리 칩 개발 성공</h3>
+            <p>세계 최초 HBM3E 양산 개시... 업계 주목</p>
+          </div>
+          <span class="views">조회수: 1,243</span>
+        </li>
+        <li class="top-news-item" onclick="location.href='/detail?id=2'">
+          <span class="rank">2</span>
+          <div class="news-content">
+            <h3>AI 시대, 챗GPT의 등장과 그 영향은?</h3>
+            <p>산업 전반에 미치는 인공지능의 파급력 분석</p>
+          </div>
+          <span class="views">조회수: 956</span>
+        </li>
+        <li class="top-news-item" onclick="location.href='/detail?id=8'">
+          <span class="rank">3</span>
+          <div class="news-content">
+            <h3>한국형 양자컴퓨터 개발 현황</h3>
+            <p>국내 연구진, 양자 우위 달성을 위한 연구 성과 발표</p>
+          </div>
+          <span class="views">조회수: 872</span>
+        </li>
+        <li class="top-news-item" onclick="location.href='/detail?id=4'">
+          <span class="rank">4</span>
+          <div class="news-content">
+            <h3>클라우드 보안 취약점 발견, 기업들 긴급 대응</h3>
+            <p>주요 클라우드 서비스 공격 가능성에 사이버 보안 전문가 경고</p>
+          </div>
+          <span class="views">조회수: 743</span>
+        </li>
+        <li class="top-news-item" onclick="location.href='/detail?id=7'">
+          <span class="rank">5</span>
+          <div class="news-content">
+            <h3>빅데이터로 예측하는 미래 산업 동향</h3>
+            <p>데이터 분석을 통해 살펴본 2025년 IT 시장 전망</p>
+          </div>
+          <span class="views">조회수: 687</span>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- 뉴스 리스트 -->
+    <h2 class="section-title">최신 뉴스</h2>
+    <div class="news-list">
+      <div class="news-card" onclick="location.href='/detail?id=1'">
+        <span class="category-tag">정치</span>
+        <h3>정치 뉴스</h3>
+        <p>윤리위, 강경 발언 정리 중... 정치계 논란</p>
+      </div>
+      
+      <div class="news-card" onclick="location.href='/detail?id=2'">
+        <span class="category-tag">AI</span>
+        <h3>AI 뉴스</h3>
+        <p>AI 시대, 챗GPT의 등장과 그 영향은?</p>
+      </div>
+      
+      <div class="news-card" onclick="location.href='/detail?id=3'">
+        <span class="category-tag">데이터</span>
+        <h3>데이터 분석 트렌드</h3>
+        <p>실시간 데이터 분석의 중요성과 기업 활용 사례</p>
+      </div>
+      
+      <div class="news-card" onclick="location.href='/detail?id=4'">
+        <span class="category-tag">보안</span>
+        <h3>클라우드 보안 취약점 발견</h3>
+        <p>주요 클라우드 서비스 공격 가능성에 사이버 보안 전문가 경고</p>
+      </div>
+    </div>
+    
+    <!-- 사용자 분석 탭 -->
+    <div class="analytics-tab" onclick="location.href='/analytics'">
+      <h3>사용자 분석 화면 보기</h3>
+      <p>맞춤 분석 뉴스 커버리지</p>
+    </div>
+    
+    <footer>
+      <p>© 2025 IT 뉴스 큐레이션. All rights reserved.</p>
+    </footer>
+  </div>
+  
+  <script>
+    function filterByKeyword(keyword) {
+      // 현재 활성화된 키워드 버튼 스타일링을 위한 코드
+      const buttons = document.querySelectorAll('.keyword-btn');
+      buttons.forEach(btn => {
+        if (btn.textContent === keyword) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      // 실제 구현에서는 서버에 요청을 보내거나 클라이언트 사이드 필터링을 수행
+      // 예시를 위한 페이지 이동
+      location.href = `/news?keyword=${keyword}`;
+    }
+  </script>
+</body>
+</html>

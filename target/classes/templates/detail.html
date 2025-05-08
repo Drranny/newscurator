@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>뉴스 상세 - 뉴스 큐레이션</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 0;
+      margin: 0;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .news-detail {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .category-tag {
+      display: inline-block;
+      background: #e74c3c;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    
+    .news-title {
+      font-size: 28px;
+      margin: 10px 0 20px;
+    }
+    
+    .meta-info {
+      display: flex;
+      justify-content: space-between;
+      color: #999;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .news-content {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    
+    .news-content p {
+      margin-bottom: 20px;
+    }
+    
+    .back-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background: #e74c3c;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    
+    .back-button:hover {
+      background: #c0392b;
+    }
+    
+    .related-news {
+      margin-top: 40px;
+    }
+    
+    .related-news h3 {
+      border-left: 5px solid #e74c3c;
+      padding-left: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .related-list {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+    
+    .related-item {
+      min-width: 200px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+    }
+    
+    .related-item:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .related-item h4 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+    }
+    
+    .related-item p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="news-detail">
+      <span class="category-tag">AI</span>
+      <h1 class="news-title">AI 시대, 챗GPT의 등장과 그 영향은?</h1>
+      
+      <div class="meta-info">
+        <span>작성일: 2025년 4월 10일</span>
+        <span>조회수: 956</span>
+      </div>
+      
+      <div class="news-content">
+        <p>최근 인공지능 기술의 급속한 발전으로 챗GPT와 같은 대화형 AI 모델이 주목받고 있습니다. 이러한 기술은 산업 전반에 혁신적인 변화를 가져오고 있으며, 기업들은 AI를 활용한 새로운 비즈니스 모델을 모색하고 있습니다.</p>
+        
+        <p>챗GPT는 OpenAI에서 개발한 대규모 언어 모델로, 인간과 유사한 대화를 할 수 있는 능력을 갖추고 있습니다. 이 모델은 텍스트 생성, 코드 작성, 번역, 요약 등 다양한 작업을 수행할 수 있어 많은 산업 분야에서 활용되고 있습니다.</p>
+        
+        <p>특히 IT 업계에서는 개발자들의 생산성을 높이는 도구로 활용되고 있으며, 교육 분야에서는 맞춤형 학습 콘텐츠 제공에 사용되고 있습니다. 또한 고객 서비스 영역에서는 챗봇으로 활용되어 24시간 고객 응대가 가능해졌습니다.</p>
+        
+        <p>하지만 이러한 발전에도 불구하고, AI 기술의 윤리적 측면과 일자리 대체 문제 등 여러 우려의 목소리도 커지고 있습니다. 정확한 정보와 편향되지 않은 콘텐츠를 제공하는 것이 AI 개발의 중요한 과제로 떠오르고 있습니다.</p>
+        
+        <p>앞으로 AI 기술은 더욱 발전하여 우리 사회와 경제에 더 깊이 통합될 것으로 예상됩니다. 기업과 개인은 이러한 변화에 적응하고 새로운 기회를 찾기 위해 계속해서 노력해야 할 것입니다.</p>
+      </div>
+      
+      <a href="/" class="back-button">← 목록으로 돌아가기</a>
+    </div>
+    
+    <div class="related-news">
+      <h3>관련 뉴스</h3>
+      <div class="related-list">
+        <div class="related-item" onclick="location.href='/detail?id=6'">
+          <h4>생성형 AI 규제 논의 본격화</h4>
+          <p>정부, AI 규제 프레임워크 마련 착수</p>
+        </div>
+        <div class="related-item" onclick="location.href='/detail?id=9'">
+          <h4>AI 개발자 수요 급증</h4>
+          <p>IT 기업들, AI 인재 확보 위한 경쟁 치열</p>
+        </div>
+        <div class="related-item" onclick="location.href='/detail?id=12'">
+          <h4>국내 AI 스타트업 투자 동향</h4>
+          <p>2025년 1분기 AI 분야 투자 200% 증가</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

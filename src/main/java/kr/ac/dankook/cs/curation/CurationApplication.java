@@ -2,6 +2,8 @@ package kr.ac.dankook.cs.curation;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -9,7 +11,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * - @SpringBootApplication: 컴포넌트 스캔, 설정, 자동 설정 활성화
  * - @EnableScheduling: 스케줄링 작업 (@Scheduled 메서드) 활성화
  */
-@SpringBootApplication
+@SpringBootApplication(
+  exclude = {
+    SecurityAutoConfiguration.class,
+    UserDetailsServiceAutoConfiguration.class
+  }
+)
+//이 부분 있어야 로그인 창 넘기고 조회 가능함
 @EnableScheduling // 스케줄링 기능 활성화 (@Scheduled 사용 가능하게 함)
 public class CurationApplication {
 

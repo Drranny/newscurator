@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 관련 뉴스 - 뉴스 큐레이션</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 0;
+      margin: 0;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    header h1 {
+      margin: 0;
+    }
+    
+    .back-link {
+      color: #e74c3c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .keyword-badge {
+      display: inline-block;
+      background: #e74c3c;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      margin-left: 10px;
+      font-size: 18px;
+    }
+    
+    .filter-options {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    
+    .sort-options {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .sort-btn {
+      padding: 8px 15px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .sort-btn:hover, .sort-btn.active {
+      background: #e74c3c;
+      color: white;
+      border-color: #e74c3c;
+    }
+    
+    .search-box {
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      width: 250px;
+      font-size: 14px;
+    }
+    
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    
+    .news-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .news-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-image {
+      height: 180px;
+      background-color: #eee;
+      background-position: center;
+      background-size: cover;
+    }
+    
+    .card-content {
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-title {
+      font-size: 18px;
+      margin: 0 0 10px 0;
+    }
+    
+    .card-excerpt {
+      color: #666;
+      margin-bottom: 15px;
+      flex-grow: 1;
+    }
+    
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #999;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    
+    .pagination button {
+      width: 40px;
+      height: 40px;
+      margin: 0 5px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .pagination button:hover, .pagination button.active {
+      background: #e74c3c;
+      color: white;
+      border-color: #e74c3c;
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+    
+    .no-results h2 {
+      color: #e74c3c;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>뉴스 큐레이션 <span class="keyword-badge">AI</span></h1>
+      <a href="/" class="back-link">← 메인으로 돌아가기</a>
+    </header>
+    
+    <div class="filter-options">
+      <div class="sort-options">
+        <button class="sort-btn active">최신순</button>
+        <button class="sort-btn">조회수순</button>
+        <button class="sort-btn">관련도순</button>
+      </div>
+      <input type="text" class="search-box" placeholder="이 키워드 내에서 검색...">
+    </div>
+    
+    <div class="news-grid">
+      <div class="news-card" th:each="article : ${articles}" th:onclick="|location.href='/detail?id=${article.id}'|">
+        <div class="card-image" style="background-image: url('/api/placeholder/400/320');"></div>
+        <div class="card-content">
+          <h3 class="card-title" th:text="${article.title}">기사 제목</h3>
+          <p class="card-excerpt" th:text="${article.description}">기사 설명</p>
+          <div class="card-meta">
+            <span th:text="${#dates.format(article.publishedAt, 'yyyy.MM.dd')}">2025.04.10</span>
+            <span th:text="'조회수: ' + ${article.viewCount}">조회수: 123</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+  
+  <script>
+    // 정렬 버튼 활성화 기능
+    const sortButtons = document.querySelectorAll('.sort-btn');
+    sortButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        sortButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        // 실제 구현에서는 여기에 데이터 정렬 로직이 들어갑니다
+      });
+    });
+  </script>
+</body>
+</html>
