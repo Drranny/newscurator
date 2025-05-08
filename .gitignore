@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# ── 빌드 산출물 (Maven, Gradle 등)
+target/
+
+# ── VSCode 개인 설정
+.vscode/
+
