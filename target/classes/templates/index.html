@@ -261,6 +261,38 @@
         <p>주요 클라우드 서비스 공격 가능성에 사이버 보안 전문가 경고</p>
       </div>
     </div>
+
+        <!-- “오늘의 IT 밈” 섹션 시작 -->
+    <div style="text-align:center; margin:20px;">
+      <h2> 오늘의 IT 밈 </h2>
+      <img id="meme" src="" alt="IT meme" style="max-width:80%; border-radius:8px; display:block; margin:0 auto 10px;">
+      <button id="reload" style="padding:8px 16px; cursor:pointer;">다른 밈 보기</button>
+    </div>
+
+    <script>
+      // static/memes 폴더에 올려둔 파일명들
+      const MEMES = [
+        '/memes/meme1.png',
+        '/memes/meme2.png',
+        '/memes/meme3.png',
+        '/memes/meme4.png'
+        // …추가한 만큼 계속
+      ];
+
+      const img = document.getElementById('meme');
+      const btn = document.getElementById('reload');
+
+      function showRandomMeme() {
+        const i = Math.floor(Math.random() * MEMES.length);
+        img.src = MEMES[i];
+        img.alt = `IT meme #${i + 1}`;
+      }
+
+      btn.addEventListener('click', showRandomMeme);
+      showRandomMeme();  // 초기 로드
+    </script>
+    <!-- “오늘의 IT 밈” 섹션 끝 -->
+
     
     <!-- 사용자 분석 탭 -->
     <div class="analytics-tab" onclick="location.href='/analytics'">
