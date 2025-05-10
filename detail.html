@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${news.title} + ' - 뉴스 큐레이션'">뉴스 상세 - 뉴스 큐레이션</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --primary-hover: #0056b3;
+            --text-color: #f7f7f7;
+            --text-secondary: #a0a0a0;
+            --bg-color: #000000;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #222222;
+            --bg-dark: #111111;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* 네비게이션 스타일 */
+        .top-nav {
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4rem;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button {
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-button:hover {
+            color: var(--text-color);
+        }
+
+        .main-nav {
+            display: flex;
+            margin-left: 1.5rem;
+        }
+
+        .nav-brand {
+            font-weight: bold;
+            padding: 0.75rem;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .category-menu {
+            display: flex;
+            gap: 2rem;
+            margin-left: 1rem;
+        }
+
+        .category-item {
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .category-item:hover, .category-item.active {
+            color: var(--text-color);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-button {
+            padding: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .icon-button:hover {
+            color: var(--text-color);
+        }
+
+        .divider {
+            color: #444444;
+            margin: 0 0.25rem;
+        }
+
+        .nav-button {
+            padding: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            color: var(--text-color);
+        }
+
+        /* 메인 컨텐츠 스타일 */
+        .main-content {
+            background-color: var(--bg-color);
+            padding: 2rem 0 3rem;
+        }
+
+        /* 뉴스 상세 페이지 스타일 */
+        .back-button {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            color: var(--text-color);
+        }
+
+        .back-button i {
+            margin-right: 0.25rem;
+        }
+
+        .news-detail-container {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .news-image {
+            width: 100%;
+            height: 300px;
+        }
+
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-tag {
+            padding: 0.25rem 0.5rem;
+            background-color: var(--bg-card);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .news-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .news-author, .news-source {
+            margin-right: 1rem;
+        }
+
+        .meta-right {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .news-views, .news-recommended {
+            display: flex;
+            align-items: center;
+        }
+
+        .news-views i, .news-recommended i {
+            margin-right: 0.25rem;
+        }
+
+        .news-text {
+            color: var(--text-color);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .news-text p {
+            margin-bottom: 1rem;
+        }
+
+        .news-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .share-button {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .share-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .save-button {
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-card);
+            border-radius: 4px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .save-button:hover {
+            background-color: #2e2e2e;
+        }
+
+        .reaction-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .like-button, .bookmark-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        .like-button:hover, .bookmark-button:hover {
+            color: var(--text-color);
+        }
+
+        .related-news {
+            margin-top: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .related-news-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .related-news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .related-item {
+            background-color: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .related-item:hover {
+            background-color: #2a2a2a;
+        }
+
+        .card-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* 푸터 스타일 */
+        .site-footer {
+            background-color: var(--bg-dark);
+            padding: 2.5rem 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .footer-title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .footer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-button {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 네비게이션 바 -->
+    <nav class="top-nav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-left">
+                    <button class="menu-button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="main-nav">
+                        <a class="nav-brand" th:href="@{/}">News Curation</a>
+                        <div class="category-menu">
+                            <a class="category-item" th:classappend="${news.category == 'AI'} ? 'active' : ''" th:href="@{/category/AI}">AI</a>
+                            <a class="category-item" th:classappend="${news.category == '하드웨어'} ? 'active' : ''" th:href="@{/category/하드웨어}">하드웨어</a>
+                            <a class="category-item" th:classappend="${news.category == '데이터'} ? 'active' : ''" th:href="@{/category/데이터}">데이터</a>
+                            <a class="category-item" th:classappend="${news.category == '보안'} ? 'active' : ''" th:href="@{/category/보안}">보안</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-right">
+                    <a class="icon-button" th:href="@{/analytics}">
+                        <i class="fas fa-chart-bar"></i>
+                    </a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/search}">검색</a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/login}">로그인</a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/user}">마이</a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/bookmark}">북마크</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 뒤로 가기 버튼 -->
+            <a class="back-button" th:href="@{/category/{category}(category=${news.category})}">
+                <i class="fas fa-arrow-left"></i> 뒤로 가기
+            </a>
+            
+            <!-- 뉴스 상세 컨테이너 -->
+            <div class="news-detail-container">
+                <div class="news-image">
+                    <img th:src="${news.image != null ? news.image : '/images/placeholder.jpg'}" th:alt="${news.title}">
+                </div>
+                
+                <div class="news-content">
+                    <!-- 태그 -->
+                    <div class="news-tags">
+                        <span class="news-tag" th:text="${news.category}">카테고리</span>
+                        <span class="news-tag" th:each="tag : ${news.tags}" th:text="'#' + ${tag}">태그</span>
+                    </div>
+                    
+                    <!-- 제목 -->
+                    <h1 class="news-title" th:text="${news.title}">뉴스 제목</h1>
+                    
+                    <!-- 메타 정보 -->
+                    <div class="news-meta">
+                        <div class="meta-left">
+                            <span class="news-author" th:if="${news.author != null}" th:text="${news.author} + ' | '">저자 |</span>
+                            <span class="news-source" th:text="${news.source}">출처</span>
+                            <span class="news-date" th:text="${news.formattedDate}">날짜</span>
+                        </div>
+                        <div class="meta-right">
+                            <span class="news-views">
+                                <i class="fas fa-eye"></i> <span class="views-count" th:text="${news.views}">0</span>
+                            </span>
+                            <span class="news-recommended">
+                                <i class="fas fa-thumbs-up"></i> <span class="recommended-count" th:text="${news.recommended}">0</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- 본문 내용 -->
+                    <div class="news-text">
+                        <!-- 내용이 없는 경우 -->
+                        <p th:if="${news.content == null}">본문 내용이 준비되지 않았습니다.</p>
+                        
+                        <!-- 내용이 있는 경우 -->
+                        <th:block th:if="${news.content != null}">
+                            <p th:each="paragraph : ${#strings.arraySplit(news.content, '\n\n')}" th:text="${paragraph}">
+                                뉴스 본문 내용 단락
+                            </p>
+                        </th:block>
+                    </div>
+                    
+                    <!-- 액션 버튼 -->
+                    <div class="news-actions">
+                        <div class="action-buttons">
+                            <button class="share-button" onclick="shareNews()">
+                                공유하기
+                            </button>
+                            <button class="save-button" onclick="saveNews()">
+                                저장하기
+                            </button>
+                        </div>
+                        <div class="reaction-buttons">
+                            <button class="like-button" onclick="toggleLike(this)">
+                                <i class="far fa-thumbs-up"></i>
+                            </button>
+                            <button class="bookmark-button" onclick="toggleBookmark(this)">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 관련 뉴스 -->
+            <div class="related-news">
+                <h2 class="section-title">관련 뉴스</h2>
+                <div class="related-news-grid">
+                    <!-- 관련 뉴스 항목 -->
+                    <div class="related-item" th:each="related : ${relatedNews}">
+                        <div class="list-item-header">
+                            <span class="news-category" th:text="${related.category}">카테고리</span>
+                            <div class="news-views-small">
+                                <span>👁️</span> <span th:text="${related.views}">0</span>
+                            </div>
+                        </div>
+                        <h3 class="list-item-title" th:text="${related.title}">관련 뉴스 제목</h3>
+                        <div class="list-item-footer">
+                            <span th:text="${related.source}">출처</span>
+                            <span th:text="${related.formattedDate}">날짜</span>
+                        </div>
+                        <a th:href="@{'/news/' + ${related.category} + '/' + ${related.id}}" class="card-link"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3 class="footer-title">News Curation</h3>
+                    <p class="footer-text">
+                        최신 기술 뉴스와 트렌드를 한 곳에서 확인하세요.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">고객 센터</h3>
+                    <ul class="footer-list">
+                        <li>전화: 1544-7199</li>
+                        <li>팩스: 02-123-4567</li>
+                        <li>이메일: info@newsinsa.com</li>
+                        <li>운영시간: 평일 9:00 - 18:00</li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">서비스 안내</h3>
+                    <ul class="footer-list">
+                        <li>뉴스 구독</li>
+                        <li>개인정보 처리방침</li>
+                        <li>이용약관</li>
+                        <li>공지사항</li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">소셜 미디어</h3>
+                    <div class="social-buttons">
+                        <button class="social-button">
+                            <i class="fas fa-mobile-alt"></i>
+                        </button>
+                        <button class="social-button">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <button class="social-button">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 News Curation. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>
