@@ -1,4 +1,4 @@
-package ac.kr.dankook.project.login.security;
+package kr.ac.dankook.cs.curation.login.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
