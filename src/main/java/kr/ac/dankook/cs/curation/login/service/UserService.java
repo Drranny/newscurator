@@ -1,18 +1,15 @@
-package ac.kr.dankook.project.login.service;
+package kr.ac.dankook.cs.curation.login.service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import ac.kr.dankook.project.login.data.PasswordChangeRequest;
-import ac.kr.dankook.project.login.data.PasswordResetRequest;
-import ac.kr.dankook.project.login.data.SignupRequest;
-import ac.kr.dankook.project.login.data.User;
-import ac.kr.dankook.project.login.repository.UserRepository;
+import kr.ac.dankook.cs.curation.login.data.PasswordChangeRequest;
+import kr.ac.dankook.cs.curation.login.data.PasswordResetRequest;
+import kr.ac.dankook.cs.curation.login.data.SignupRequest;
+import kr.ac.dankook.cs.curation.login.data.User;
+import kr.ac.dankook.cs.curation.login.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
