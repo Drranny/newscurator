@@ -1,10 +1,9 @@
-package ac.kr.dankook.project.login.service;
+package kr.ac.dankook.cs.curation.login.service;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -12,11 +11,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import ac.kr.dankook.project.login.data.OAuthAttributes;
-import ac.kr.dankook.project.login.data.User;
-import ac.kr.dankook.project.login.repository.UserRepository;
-import ac.kr.dankook.project.login.security.JwtTokenProvider;
+import kr.ac.dankook.cs.curation.login.data.OAuthAttributes;
+import kr.ac.dankook.cs.curation.login.data.User;
+import kr.ac.dankook.cs.curation.login.repository.UserRepository;
+import kr.ac.dankook.cs.curation.login.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 
 @Service
