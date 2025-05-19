@@ -1,7 +1,7 @@
-package ac.kr.dankook.project.login.security;
+package kr.ac.dankook.cs.curation.login.security;
 
-import ac.kr.dankook.project.login.data.User;
-import ac.kr.dankook.project.login.repository.UserRepository;
+import kr.ac.dankook.cs.curation.login.data.User;
+import kr.ac.dankook.cs.curation.login.repository.UserRepository;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.Map;
 
