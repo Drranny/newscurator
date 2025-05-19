@@ -1,4 +1,0 @@
-jwt:
-  accessExpirationMs: 3600000    # 1시간
-  refreshExpirationMs: 36000000   # 10시간 
-  secret: N2w1dzQ0cGx2NGtqM3N4dTZ5dHlmMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0
