@@ -1,4 +1,4 @@
-package kr.ac.dankook.cs.curation.login.data
+package kr.ac.dankook.cs.curation.login.data;
 
 import lombok.Builder;
 
