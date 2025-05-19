@@ -1,10 +1,9 @@
-package ac.kr.dankook.project.login.service;
+package kr.ac.dankook.cs.curation.login.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
-import ac.kr.dankook.project.login.repository.UserRepository;
+import kr.ac.dankook.cs.curation.login.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
