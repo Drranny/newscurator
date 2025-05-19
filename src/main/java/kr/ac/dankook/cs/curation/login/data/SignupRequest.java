@@ -1,4 +1,4 @@
-package ac.kr.dankook.project.login.data;
+package kr.ac.dankook.cs.curation.login.data;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
