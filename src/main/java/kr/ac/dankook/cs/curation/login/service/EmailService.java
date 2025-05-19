@@ -1,10 +1,9 @@
-package ac.kr.dankook.project.login.service;
+package kr.ac.dankook.cs.curation.login.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import ac.kr.dankook.project.login.data.User;
+import kr.ac.dankook.cs.curation.login.data.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
