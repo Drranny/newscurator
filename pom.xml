@@ -100,6 +100,24 @@
             <artifactId>KOMORAN</artifactId>
             <version>3.3.4</version>
         </dependency>
+
+          <!-- 1) Bean Validation -->
+           <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-validation</artifactId>
+           </dependency>
+             
+             <!-- 2) OAuth2 Client support -->
+             <dependency>
+                      <groupId>org.springframework.boot</groupId>
+                      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+             </dependency>
+             
+             <!-- 3) JavaMail support -->
+             <dependency>
+                      <groupId>org.springframework.boot</groupId>
+                      <artifactId>spring-boot-starter-mail</artifactId>
+             </dependency>
     </dependencies>
 
     <repositories>
