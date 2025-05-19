@@ -1,4 +1,4 @@
-package ac.kr.dankook.project.login.security;
+package kr.ac.dankook.cs.curation.login.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
@@ -14,9 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.Customizer;
-
-import ac.kr.dankook.project.login.service.CustomOAuth2UserService;
-import ac.kr.dankook.project.login.service.UserDetailService;
+import kr.ac.dankook.cs.curation.login.service.CustomOAuth2UserService;
+import kr.ac.dankook.cs.curation.login.service.UserDetailService;
 
 @RequiredArgsConstructor
 @Configuration
