@@ -1,10 +1,8 @@
-package ac.kr.dankook.project.login.repository;
+package package kr.ac.dankook.cs.curation.login.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import ac.kr.dankook.project.login.data.User;
-
+import kr.ac.dankook.cs.curation.login.data.User;
 import java.util.Optional;
 
 @Repository
