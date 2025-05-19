@@ -1,4 +1,4 @@
-package ac.kr.dankook.project.login.data;
+package kr.ac.dankook.cs.curation.login.data;
 
 public record PasswordChangeRequest(
     String userId,
