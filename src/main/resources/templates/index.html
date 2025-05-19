@@ -67,6 +67,19 @@
         .main-nav {
             display: flex;
             align-items: center; /* 추가: 세로 중앙 정렬 */
+
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo img {
+            height: 2.2rem;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+
         }
 
         .nav-brand {
@@ -663,6 +676,23 @@
         .meme-button:hover {
             background-color: var(--primary-hover);
         }
+
+
+        .detail-btn {
+            display: inline-block;
+            margin-left: 1rem;
+            padding: 0.3rem 1rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .detail-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
     </style>
 </head>
 <body>
@@ -676,6 +706,10 @@
                     </button>
                     
                     <div class="main-nav">
+
+                        <a class="nav-logo" th:href="@{/}">
+                            <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
+                        </a>
                         <a class="nav-brand" th:href="@{/}">Curaty</a>
                         <div class="category-menu">
                             <a class="category-item" th:href="@{/category/AI}">AI</a>
@@ -785,6 +819,7 @@
                                 <div class="news-card-footer">
                                     <span th:text="${news.source}">출처</span>
                                     <span th:text="${news.formattedDate}">날짜</span>
+                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">상세보기</a>
                                 </div>
                             </div>
                             <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
@@ -821,6 +856,7 @@
                                     <span class="news-views-small">
                                         <span>👁️</span> <span th:text="${news.views}">0</span>
                                     </span>
+                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">상세보기</a>
                                 </div>
                             </div>
                             <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
@@ -944,19 +980,31 @@
         const memeImage = document.getElementById('meme-image');
         
         if(memeButton && memeImage) {
+            const MEMES = [
+              '/memes/meme1.png',
+              '/memes/meme2.png',
+              '/memes/meme3.png',
+              '/memes/meme4.png'
+              // …추가한 만큼 계속
+            ];
+            let recentMemes = [];
+            function getRandomMeme() {
+                const candidates = MEMES.filter(meme => !recentMemes.includes(meme));
+                let meme;
+                if (candidates.length === 0) {
+                    recentMemes = [];
+                    meme = MEMES[Math.floor(Math.random() * MEMES.length)];
+                } else {
+                    meme = candidates[Math.floor(Math.random() * candidates.length)];
+                }
+                recentMemes.push(meme);
+                if (recentMemes.length > 10) recentMemes.shift();
+                return meme;
+            }
             memeButton.addEventListener('click', function() {
-                // static/memes 폴더에 올려둔 파일명들
-                const MEMES = [
-                  '/memes/meme1.png',
-                  '/memes/meme2.png',
-                  '/memes/meme3.png',
-                  '/memes/meme4.png'
-                  // …추가한 만큼 계속
-                ];
-                
-                const i = Math.floor(Math.random() * MEMES.length);
-                memeImage.src = MEMES[i];
-                memeImage.alt = `IT meme #${i + 1}`;
+                const meme = getRandomMeme();
+                memeImage.src = meme;
+                memeImage.alt = `IT meme`;
             });
         }
     </script>
