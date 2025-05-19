@@ -1,4 +1,4 @@
-package ac.kr.dankook.project.login.security;
+package kr.ac.dankook.cs.curation.login.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import ac.kr.dankook.project.login.service.UserDetailService;
+import kr.ac.dankook.cs.curation.login.service.UserDetailService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
