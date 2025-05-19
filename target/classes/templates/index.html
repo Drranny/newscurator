@@ -66,7 +66,18 @@
 
         .main-nav {
             display: flex;
-            margin-left: 1.5rem;
+            align-items: center; /* 추가: 세로 중앙 정렬 */
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo img {
+            height: 2.2rem;
+            vertical-align: middle;
+            margin-right: 0.5rem;
         }
 
         .nav-brand {
@@ -74,12 +85,15 @@
             padding: 0.75rem;
             color: var(--text-color);
             text-decoration: none;
+            font-size: 1.75rem;
+            margin-right: 1rem; /* 추가: 브랜드와 카테고리 사이 간격 */
         }
 
         .category-menu {
             display: flex;
-            gap: 2rem;
-            margin-left: 1rem;
+            gap: 1.5rem; /* 수정: 간격 줄임 */
+            margin-left: 0; /* 수정: 마진 제거 */
+            align-items: center; /* 추가: 세로 중앙 정렬 */
         }
 
         .category-item {
@@ -135,7 +149,7 @@
         }
 
         .site-title {
-            font-size: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
             margin: 0;
         }
@@ -167,7 +181,7 @@
             padding: 0 1rem;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             color: var(--text-secondary);
             background: none;
             border: none;
@@ -183,38 +197,251 @@
 
         .category-wrapper {
             display: flex;
-            overflow-x: auto;
+            justify-content: space-between; /* 좌우 정렬 */
+            align-items: center;            /* 수직 중앙 정렬 */
             padding: 1rem 0;
-            gap: 1.5rem;
         }
 
+        .menu-left {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
         .nav-item {
             white-space: nowrap;
             color: var(--text-secondary);
             text-decoration: none;
+            margin-right: 1.5rem; /* 항목 간 간격 추가 */
+        }
+
+        .nav-item:last-child {
+            margin-right: 0; /* 마지막 항목은 간격 없음 */
         }
 
         .nav-item:hover, .nav-item.active {
             color: var(--text-color);
         }
+        
+       
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 300px; /* 검색창 너비 조정 */
+            margin-left: auto; /* 우측 정렬 */
+        }
 
-        /* 메인 컨텐츠 스타일 */
-        .main-content {
+        .search-box input {
+            width: 100%;
+            padding: 0.5rem 2.5rem 0.5rem 1rem;
             background-color: var(--bg-color);
-            padding: 2rem 0 3rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 4px; /* 모서리 둥글게 */
         }
 
-        .page {
-            display: none;
+        .search-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            padding: 0 0.75rem; /* 패딩 줄임 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
         }
 
-        .page.active {
-            display: block;
+        /* 슬라이더 스타일 */
+        .main-slider {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin-bottom: 3rem;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
-        .section-title {
+        .main-slider-placeholder {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 3rem;
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .placeholder-content h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .placeholder-content p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* 데이터가 없을 때 플레이스홀더 스타일 */
+        .placeholder-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .placeholder-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .placeholder-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 300px;
+        }
+
+        .placeholder-image {
+            height: 200px;
+            background-color: var(--bg-dark);
+        }
+
+        .placeholder-content {
+            padding: 1rem;
+        }
+
+        .placeholder-title {
+            height: 1.5rem;
+            width: 80%;
+            background-color: var(--bg-dark);
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .placeholder-text {
+            height: 1rem;
+            width: 100%;
+            background-color: var(--bg-dark);
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .placeholder-meta {
+            height: 0.75rem;
+            width: 60%;
+            background-color: var(--bg-dark);
+            border-radius: 4px;
+        }
+
+        .ranking-placeholder {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .placeholder-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 4px;
+            height: 4rem;
+        }
+
+        .placeholder-number {
             font-size: 1.25rem;
-            margin-bottom: 1.5rem;
+            font-weight: bold;
+            color: var(--text-secondary);
+            width: 2rem;
+            text-align: center;
+            margin-right: 1rem;
+        }
+
+        .placeholder-content {
+            flex: 1;
+        }
+
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+
+        .slider-item {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slider-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 2rem;
+        }
+
+        .slider-category {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .slider-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .slider-nav {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .slider-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .slider-dot.active {
+            background-color: white;
         }
 
         /* 홈 페이지 스타일 */
@@ -417,6 +644,51 @@
             border-top: 1px solid var(--border-color);
             color: #555555;
         }
+
+        /* IT 밈 섹션 스타일 */
+        .it-meme-section {
+            margin-top: 3rem;
+            background-color: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .meme-image {
+            max-width: 100%;
+            height: auto;
+            margin: 1rem auto;
+            border-radius: 8px;
+        }
+
+        .meme-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .meme-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .detail-btn {
+            display: inline-block;
+            margin-left: 1rem;
+            padding: 0.3rem 1rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .detail-btn:hover {
+            background-color: var(--primary-hover);
+        }
     </style>
 </head>
 <body>
@@ -430,7 +702,10 @@
                     </button>
                     
                     <div class="main-nav">
-                        <a class="nav-brand" th:href="@{/}">News Curation</a>
+                        <a class="nav-logo" th:href="@{/}">
+                            <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
+                        </a>
+                        <a class="nav-brand" th:href="@{/}">Curaty</a>
                         <div class="category-menu">
                             <a class="category-item" th:href="@{/category/AI}">AI</a>
                             <a class="category-item" th:href="@{/category/하드웨어}">하드웨어</a>
@@ -445,11 +720,9 @@
                         <i class="fas fa-chart-bar"></i>
                     </a>
                     <span class="divider">|</span>
-                    <a class="nav-button" th:href="@{/search}">검색</a>
-                    <span class="divider">|</span>
                     <a class="nav-button" th:href="@{/login}">로그인</a>
                     <span class="divider">|</span>
-                    <a class="nav-button" th:href="@{/user}">마이</a>
+                    <a class="nav-button" th:href="@{/user}">마이페이지</a>
                     <span class="divider">|</span>
                     <a class="nav-button" th:href="@{/bookmark}">북마크</a>
                 </div>
@@ -457,11 +730,19 @@
         </div>
     </nav>
 
-    <!-- 로고 및 검색 영역 -->
-    <div class="search-area">
+
+    <!-- 카테고리 내비게이션 -->
+    <div class="category-nav">
         <div class="container">
-            <div class="search-wrapper">
-                <h1 class="site-title">News Curation</h1>
+            <div class="category-wrapper">
+                <div class="menu-left">
+                    <a class="nav-item" th:href="@{/}">추천</a>
+                    <a class="nav-item" th:href="@{/#ranking}">랭킹</a>
+                    <a class="nav-item" th:href="@{/category/전체?sort=latest}">최신</a>
+                    <a class="nav-item" th:href="@{/category/전체?sort=views}">인기</a>
+                    <!-- 여기서 키워드 링크를 수정했습니다 - 직접 /keywords 페이지로 이동하도록 변경 -->
+                    <a class="nav-item" th:href="@{/keywords}">키워드</a>
+                </div>
                 <form action="/search" method="get" class="search-box">
                     <input type="text" name="query" placeholder="키워드로 뉴스 검색...">
                     <button type="submit" class="search-button">
@@ -472,26 +753,48 @@
         </div>
     </div>
 
-    <!-- 카테고리 내비게이션 -->
-    <div class="category-nav">
-        <div class="container">
-            <div class="category-wrapper">
-                <a class="nav-item" th:href="@{/}">추천</a>
-                <a class="nav-item" th:href="@{/#ranking}">랭킹</a>
-                <a class="nav-item" th:href="@{/category/전체?sort=latest}">최신</a>
-                <a class="nav-item" th:href="@{/category/전체?sort=views}">인기</a>
-                <a class="nav-item" th:href="@{/keywords}">키워드</a>
-            </div>
-        </div>
-    </div>
-
     <!-- 메인 컨텐츠 영역 -->
     <main class="main-content">
         <div class="container">
             <!-- 메인 페이지 컨텐츠 -->
             <div id="home-page" class="page active">
+                <!-- 메인 슬라이더 (헤드라인 뉴스) -->
+                <div class="main-slider" th:if="${headlineNews != null and not #lists.isEmpty(headlineNews)}">
+                    <div class="slider-container" id="slider-container">
+                        <!-- 슬라이더 아이템 동적 반복 -->
+                        <div th:each="headline, status : ${headlineNews}" class="slider-item">
+                            <img class="slider-image" th:src="${headline.image}" th:alt="${headline.title}">
+                            <div class="slider-caption">
+                                <span class="slider-category" th:text="${headline.category}">카테고리</span>
+                                <h2 class="slider-title" th:text="${headline.title}">뉴스 제목</h2>
+                                <p class="slider-description" th:text="${headline.description}">뉴스 설명</p>
+                                <div class="slider-meta">
+                                    <span th:text="${headline.source}">출처</span>
+                                    <span th:text="${headline.date}">날짜</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 슬라이더 네비게이션 -->
+                    <div class="slider-nav">
+                        <div th:each="dot, status : ${headlineNews}" 
+                             th:class="${status.index == 0} ? 'slider-dot active' : 'slider-dot'" 
+                             th:onclick="'moveSlide(' + ${status.index} + ')'"></div>
+                    </div>
+                </div>
+                
+                <!-- 헤드라인 뉴스가 없을 때 대체 콘텐츠 -->
+                <div class="main-slider-placeholder" th:if="${headlineNews == null or #lists.isEmpty(headlineNews)}">
+                    <div class="placeholder-content">
+                        <h2>최신 헤드라인 뉴스</h2>
+                        <p>곧 업데이트될 예정입니다.</p>
+                    </div>
+                </div>
+                
                 <!-- 추천 뉴스 -->
-                <div class="recommended-news">
+                <div class="recommended-news" th:if="${recommendedNews != null and not #lists.isEmpty(recommendedNews)}">
+                    <h2 class="section-title">추천 뉴스</h2>
                     <div class="news-grid">
                         <!-- 추천 뉴스 항목 -->
                         <div class="news-card" th:each="news : ${recommendedNews}">
@@ -511,6 +814,7 @@
                                 <div class="news-card-footer">
                                     <span th:text="${news.source}">출처</span>
                                     <span th:text="${news.formattedDate}">날짜</span>
+                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">상세보기</a>
                                 </div>
                             </div>
                             <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
@@ -518,8 +822,23 @@
                     </div>
                 </div>
                 
+                <!-- 추천 뉴스가 없을 때 대체 콘텐츠 -->
+                <div class="recommended-news-placeholder" th:if="${recommendedNews == null or #lists.isEmpty(recommendedNews)}">
+                    <h2 class="section-title">추천 뉴스</h2>
+                    <div class="placeholder-grid">
+                        <div class="placeholder-card" th:each="i : ${#numbers.sequence(1, 3)}">
+                            <div class="placeholder-image"></div>
+                            <div class="placeholder-content">
+                                <div class="placeholder-title"></div>
+                                <div class="placeholder-text"></div>
+                                <div class="placeholder-meta"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- 조회수 순위 -->
-                <div id="ranking" class="news-ranking">
+                <div id="ranking" class="news-ranking" th:if="${topViewedNews != null and not #lists.isEmpty(topViewedNews)}">
                     <h2 class="section-title">조회수 순위</h2>
                     <div class="ranking-list">
                         <!-- 랭킹 뉴스 항목 -->
@@ -532,53 +851,44 @@
                                     <span class="news-views-small">
                                         <span>👁️</span> <span th:text="${news.views}">0</span>
                                     </span>
+                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">상세보기</a>
                                 </div>
                             </div>
                             <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
                         </div>
                     </div>
                 </div>
+                
+                <!-- 조회수 순위가 없을 때 대체 콘텐츠 -->
+                <div id="ranking" class="news-ranking" th:if="${topViewedNews == null or #lists.isEmpty(topViewedNews)}">
+                    <h2 class="section-title">조회수 순위</h2>
+                    <div class="ranking-placeholder">
+                        <div class="placeholder-item" th:each="i : ${#numbers.sequence(1, 5)}">
+                            <span class="placeholder-number" th:text="${i}">1</span>
+                            <div class="placeholder-content">
+                                <div class="placeholder-title"></div>
+                                <div class="placeholder-meta"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- IT 밈 섹션 -->
+                <div class="it-meme-section">
+                    <h2 class="section-title">오늘의 IT 밈</h2>
+                    <img id="meme-image" th:src="${currentMeme != null ? currentMeme : '/memes/meme1.png'}" alt="IT 밈" class="meme-image">
+                    <button id="meme-button" class="meme-button">다른 밈 보기</button>
+                </div>
             </div>
         </div>
     </main>
-     <!-- “오늘의 IT 밈” 섹션 시작 -->
-     <div style="text-align:center; margin:20px;">
-      <h2> 오늘의 IT 밈 </h2>
-      <img id="meme" src="" alt="IT meme" style="max-width:80%; border-radius:8px; display:block; margin:0 auto 10px;">
-      <button id="reload" style="padding:8px 16px; cursor:pointer;">다른 밈 보기</button>
-    </div>
-
-    <script>
-      // static/memes 폴더에 올려둔 파일명들
-      const MEMES = [
-        '/memes/meme1.png',
-        '/memes/meme2.png',
-        '/memes/meme3.png',
-        '/memes/meme4.png'
-        // …추가한 만큼 계속
-      ];
-
-      const img = document.getElementById('meme');
-      const btn = document.getElementById('reload');
-
-      function showRandomMeme() {
-        const i = Math.floor(Math.random() * MEMES.length);
-        img.src = MEMES[i];
-        img.alt = `IT meme #${i + 1}`;
-      }
-
-      btn.addEventListener('click', showRandomMeme);
-      showRandomMeme();  // 초기 로드
-    </script>
-    <!-- “오늘의 IT 밈” 섹션 끝 -->
- 
 
     <!-- 푸터 -->
     <footer class="site-footer">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-column">
-                    <h3 class="footer-title">News Curation</h3>
+                    <h3 class="footer-title">Curaty</h3>
                     <p class="footer-text">
                         최신 기술 뉴스와 트렌드를 한 곳에서 확인하세요.
                     </p>
@@ -586,9 +896,8 @@
                 <div class="footer-column">
                     <h3 class="footer-title">고객 센터</h3>
                     <ul class="footer-list">
-                        <li>전화: 1544-7199</li>
-                        <li>팩스: 02-123-4567</li>
-                        <li>이메일: info@newsinsa.com</li>
+                        <li>전화: 010-6404-6830</li>
+                        <li>이메일: t01064046830@dankook.ac.kr</li>
                         <li>운영시간: 평일 9:00 - 18:00</li>
                     </ul>
                 </div>
@@ -622,6 +931,77 @@
         </div>
     </footer>
 
-    <script th:src="@{/js/script.js}"></script>
+    <script th:inline="javascript">
+        // 메인 슬라이더 기능
+        let currentSlide = 0;
+        const slideCount = /*[[${headlineNews != null ? headlineNews.size() : 0}]]*/ 3; // 서버에서 가져온 슬라이드 개수 또는 기본값
+        const sliderContainer = document.getElementById('slider-container');
+        const sliderDots = document.querySelectorAll('.slider-dot');
+        
+        // 슬라이더가 존재할 때만 실행
+        if(sliderContainer && sliderDots.length > 0) {
+            // 슬라이드 이동 함수
+            function moveSlide(slideIndex) {
+                currentSlide = slideIndex;
+                updateSlider();
+            }
+            
+            // 슬라이더 업데이트 함수
+            function updateSlider() {
+                // 슬라이더 이동
+                sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                
+                // 네비게이션 도트 업데이트
+                sliderDots.forEach((dot, index) => {
+                    if (index === currentSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            // 슬라이더가 있을 때만 자동 슬라이드 실행
+            if(slideCount > 0) {
+                setInterval(() => {
+                    currentSlide = (currentSlide + 1) % slideCount;
+                    updateSlider();
+                }, 5000); // 5초마다 슬라이드 변경
+            }
+        }
+        
+        // IT 밈 기능
+        const memeButton = document.getElementById('meme-button');
+        const memeImage = document.getElementById('meme-image');
+        
+        if(memeButton && memeImage) {
+            const MEMES = [
+              '/memes/meme1.png',
+              '/memes/meme2.png',
+              '/memes/meme3.png',
+              '/memes/meme4.png'
+              // …추가한 만큼 계속
+            ];
+            let recentMemes = [];
+            function getRandomMeme() {
+                const candidates = MEMES.filter(meme => !recentMemes.includes(meme));
+                let meme;
+                if (candidates.length === 0) {
+                    recentMemes = [];
+                    meme = MEMES[Math.floor(Math.random() * MEMES.length)];
+                } else {
+                    meme = candidates[Math.floor(Math.random() * candidates.length)];
+                }
+                recentMemes.push(meme);
+                if (recentMemes.length > 10) recentMemes.shift();
+                return meme;
+            }
+            memeButton.addEventListener('click', function() {
+                const meme = getRandomMeme();
+                memeImage.src = meme;
+                memeImage.alt = `IT meme`;
+            });
+        }
+    </script>
 </body>
 </html>
