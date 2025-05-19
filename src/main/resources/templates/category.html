@@ -69,11 +69,18 @@
             margin-left: 1.5rem;
         }
 
+        .nav-logo {
+            display: flex;
+            align-items: center;
+        }
+
         .nav-brand {
             font-weight: bold;
             padding: 0.75rem;
             color: var(--text-color);
             text-decoration: none;
+            font-size: 1.75rem;
+            margin-right: 1rem;
         }
 
         .category-menu {
@@ -254,6 +261,21 @@
             color: var(--text-color);
             border-color: var(--primary-color);
         }
+
+        .detail-btn {
+            display: inline-block;
+            margin-left: 1rem;
+            padding: 0.3rem 1rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .detail-btn:hover {
+            background-color: var(--primary-hover);
+        }
     </style>
 </head>
 <body>
@@ -267,7 +289,10 @@
                     </button>
                     
                     <div class="main-nav">
-                        <a class="nav-brand" th:href="@{/}">News Curation</a>
+                        <a class="nav-logo" th:href="@{/}">
+                            <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
+                        </a>
+                        <a class="nav-brand" th:href="@{/}">Curaty</a>
                         <div class="category-menu">
                             <a class="category-item" th:classappend="${category == 'AI'} ? 'active' : ''" th:href="@{/category/AI}">AI</a>
                             <a class="category-item" th:classappend="${category == '하드웨어'} ? 'active' : ''" th:href="@{/category/하드웨어}">하드웨어</a>
@@ -345,6 +370,7 @@
                             <div class="article-meta">
                                 <span th:text="${article.sourceName}">출처</span> |
                                 <span th:text="${#temporals.format(article.publishedAt, 'yyyy-MM-dd HH:mm')}">발행일</span>
+                                <a th:href="@{'/news/' + ${article.category} + '/' + ${article.id}}" class="detail-btn">상세보기</a>
                             </div>
                         </div>
                     </div>
