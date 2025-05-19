@@ -1,4 +1,4 @@
-package ac.kr.dankook.project.login.controller;
+package kr.ac.dankook.cs.curation.login.controller;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -15,14 +15,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ac.kr.dankook.project.login.data.LoginRequest;
-import ac.kr.dankook.project.login.data.PasswordChangeRequest;
-import ac.kr.dankook.project.login.data.PasswordResetRequest;
-import ac.kr.dankook.project.login.data.SignupRequest;
-import ac.kr.dankook.project.login.data.User;
-import ac.kr.dankook.project.login.repository.UserRepository;
-import ac.kr.dankook.project.login.security.JwtTokenProvider;
-import ac.kr.dankook.project.login.service.UserService;
+import kr.ac.dankook.cs.curation.login.data.LoginRequest;
+import kr.ac.dankook.cs.curation.login.data.PasswordChangeRequest;
+import kr.ac.dankook.cs.curation.login.data.PasswordResetRequest;
+import kr.ac.dankook.cs.curation.login.data.SignupRequest;
+import kr.ac.dankook.cs.curation.login.data.User;
+import kr.ac.dankook.cs.curation.login.repository.UserRepository;
+import kr.ac.dankook.cs.curation.login.security.JwtTokenProvider;
+import kr.ac.dankook.cs.curation.login.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
