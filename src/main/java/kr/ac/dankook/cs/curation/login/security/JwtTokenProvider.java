@@ -1,17 +1,14 @@
-package ac.kr.dankook.project.login.security;
+package kr.ac.dankook.cs.curation.login.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import ac.kr.dankook.project.login.data.User;
-import ac.kr.dankook.project.login.repository.UserRepository;
-
+import kr.ac.dankook.cs.curation.login.data.User;
+import kr.ac.dankook.cs.curation.login.repository.UserRepository;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
