@@ -54,4 +54,7 @@ public class BigdataArticle {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt; // 엔티티 수정 시각
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int views = 0; // 조회수 (기본값 0)
 }

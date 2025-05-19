@@ -52,4 +52,7 @@ public class AiArticle {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt; // 엔티티 갱신 시 자동 업데이트
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int views = 0; // 조회수 (기본값 0)
 }

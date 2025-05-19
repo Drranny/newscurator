@@ -116,4 +116,57 @@ public class CurationController {
                 .map(a -> { model.addAttribute("article", a); return "detail"; })
                 .orElse("not-found");
     }
+
+    /** 카테고리별 페이지 */
+    @GetMapping("/category/{category}")
+    public String categoryPage(
+            @PathVariable String category,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String direction,
+            Model model) {
+        
+        // 정렬 기준 및 방향 설정
+        String currentSort = (sort != null) ? sort : "latest";
+        String currentDirection = (direction != null) ? direction : "desc";
+        org.springframework.data.domain.Sort.Direction dir = currentDirection.equals("asc") ? org.springframework.data.domain.Sort.Direction.ASC : org.springframework.data.domain.Sort.Direction.DESC;
+        String sortField;
+        switch (currentSort) {
+            case "views":
+                sortField = "views";
+                break;
+            case "title":
+                sortField = "title";
+                break;
+            case "latest":
+            default:
+                sortField = "publishedAt";
+                break;
+        }
+        org.springframework.data.domain.Sort springSort = org.springframework.data.domain.Sort.by(dir, sortField);
+
+        List<?> articles;
+        switch (category) {
+            case "AI":
+                articles = aiRepo.findAll(springSort);
+                break;
+            case "데이터":
+                articles = bdRepo.findAll(springSort);
+                break;
+            case "보안":
+                articles = secRepo.findAll(springSort);
+                break;
+            case "하드웨어":
+                articles = hwRepo.findAll(springSort);
+                break;
+            default:
+                return "redirect:/";
+        }
+
+        model.addAttribute("category", category);
+        model.addAttribute("articles", articles);
+        model.addAttribute("activeSort", sort);
+        model.addAttribute("currentSort", currentSort);
+        model.addAttribute("currentDirection", currentDirection);
+        return "category";
+    }
 }

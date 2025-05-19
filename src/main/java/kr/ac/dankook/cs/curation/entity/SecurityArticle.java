@@ -28,6 +28,9 @@ public class SecurityArticle {
     private String url; // 원문 URL (중복 방지)
 
     @Column(columnDefinition = "TEXT")
+    private String urlOriginal; // 원본 URL (변환 전)
+
+    @Column(columnDefinition = "TEXT")
     private String description; // 기사 요약
 
     private String author; // 작성자 (null 가능)
@@ -54,4 +57,7 @@ public class SecurityArticle {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt; // 엔티티 수정 시각
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int views = 0; // 조회수 (기본값 0)
 }

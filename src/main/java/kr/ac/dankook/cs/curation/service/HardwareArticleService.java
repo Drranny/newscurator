@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.ac.dankook.cs.curation.entity.HardwareArticle;
@@ -14,34 +15,47 @@ import kr.ac.dankook.cs.curation.repository.HardwareArticleRepository;
  */
 @Service
 public class HardwareArticleService {
-    private final HardwareArticleRepository repository;
-
-    public HardwareArticleService(HardwareArticleRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private HardwareArticleRepository hardwareArticleRepository;
 
     public HardwareArticle saveIfNotExists(HardwareArticle article) {
-        Optional<HardwareArticle> existing = repository.findByUrl(article.getUrl());
+        Optional<HardwareArticle> existing = hardwareArticleRepository.findByUrl(article.getUrl());
         if (existing.isPresent()) {
             return existing.get();
         }
         article.setRecommendedAt(LocalDateTime.now());
-        return repository.save(article);
+        return hardwareArticleRepository.save(article);
     }
 
     public List<HardwareArticle> findAll() {
-        return repository.findAll();
+        return hardwareArticleRepository.findAll();
     }
 
     public Optional<HardwareArticle> findById(Long id) {
-        return repository.findById(id);
+        return hardwareArticleRepository.findById(id);
     }
 
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        hardwareArticleRepository.deleteById(id);
     }
     
     public List<HardwareArticle> findByTitleContainingIgnoreCase(String keyword) {
-        return repository.findByTitleContainingIgnoreCase(keyword);
+        return hardwareArticleRepository.findByTitleContainingIgnoreCase(keyword);
+    }
+
+    public List<HardwareArticle> getAllArticles() {
+        return hardwareArticleRepository.findAll();
+    }
+
+    public List<HardwareArticle> getLatestArticles(int limit) {
+        return hardwareArticleRepository.findTopByOrderByPublishedAtDesc(limit);
+    }
+
+    public List<HardwareArticle> getTopViewedArticles(int limit) {
+        return hardwareArticleRepository.findTopByOrderByViewsDesc(limit);
+    }
+
+    public HardwareArticle saveArticle(HardwareArticle article) {
+        return hardwareArticleRepository.save(article);
     }
 }

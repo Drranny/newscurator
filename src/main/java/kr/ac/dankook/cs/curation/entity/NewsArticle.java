@@ -28,4 +28,7 @@ public class NewsArticle {
 
     @Column(name = "source_name")
     private String sourceName;         // 출처 이름 (예: Yonhap, ZDNet 등)
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int views = 0; // 조회수 (기본값 0)
 }

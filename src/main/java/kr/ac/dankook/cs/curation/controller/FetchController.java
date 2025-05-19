@@ -32,4 +32,34 @@ public class FetchController {
                     .body("뉴스 조회 중 오류 발생: " + e.getMessage());
         }
     }
+
+    /**
+     * GET /api/fetch/update-keywords
+     * 기존 기사들의 키워드 값을 업데이트
+     */
+    @GetMapping("/update-keywords")
+    public ResponseEntity<String> updateExistingKeywords() {
+        try {
+            newsApiService.updateExistingKeywords();
+            return ResponseEntity.ok("기존 기사들의 키워드 값 업데이트 완료");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(500)
+                    .body("키워드 업데이트 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+    /**
+     * GET /api/fetch/extract-keywords
+     * Komoran으로 모든 기사에 대해 키워드 추출 및 저장
+     */
+    @GetMapping("/extract-keywords")
+    public ResponseEntity<String> extractKeywords() {
+        try {
+            newsApiService.extractAndSaveKeywordsForAllArticles();
+            return ResponseEntity.ok("모든 기사에 대해 키워드 추출 및 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("키워드 추출 중 오류: " + e.getMessage());
+        }
+    }
 }

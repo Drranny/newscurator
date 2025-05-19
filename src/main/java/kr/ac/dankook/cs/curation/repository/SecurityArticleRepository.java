@@ -2,6 +2,7 @@ package kr.ac.dankook.cs.curation.repository;
 
 import kr.ac.dankook.cs.curation.entity.SecurityArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -37,4 +38,10 @@ public interface SecurityArticleRepository extends JpaRepository<SecurityArticle
      * @return Optional 형태로 기사 반환
      */
     Optional<SecurityArticle> findByUrl(String url);
+
+    @Query(value = "SELECT * FROM security_articles ORDER BY published_at DESC LIMIT ?1", nativeQuery = true)
+    List<SecurityArticle> findTopByOrderByPublishedAtDesc(int limit);
+    
+    @Query(value = "SELECT * FROM security_articles ORDER BY views DESC LIMIT ?1", nativeQuery = true)
+    List<SecurityArticle> findTopByOrderByViewsDesc(int limit);
 }

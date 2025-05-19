@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${category} + ' 뉴스 - 뉴스 큐레이션'">카테고리 뉴스 - 뉴스 큐레이션</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --primary-hover: #0056b3;
+            --text-color: #f7f7f7;
+            --text-secondary: #a0a0a0;
+            --bg-color: #000000;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #222222;
+            --bg-dark: #111111;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* 네비게이션 스타일 */
+        .top-nav {
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4rem;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button {
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-button:hover {
+            color: var(--text-color);
+        }
+
+        .main-nav {
+            display: flex;
+            margin-left: 1.5rem;
+        }
+
+        .nav-brand {
+            font-weight: bold;
+            padding: 0.75rem;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .category-menu {
+            display: flex;
+            gap: 2rem;
+            margin-left: 1rem;
+        }
+
+        .category-item {
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .category-item:hover, .category-item.active {
+            color: var(--text-color);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-button {
+            padding: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .icon-button:hover {
+            color: var(--text-color);
+        }
+
+        .divider {
+            color: #444444;
+            margin: 0 0.25rem;
+        }
+
+        .nav-button {
+            padding: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            color: var(--text-color);
+        }
+
+        /* 메인 컨텐츠 스타일 */
+        .main-content {
+            background-color: var(--bg-color);
+            padding: 2rem 0 3rem;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        .article-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            background-color: var(--bg-card);
+        }
+
+        .article-title {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .article-title:hover {
+            color: var(--primary-color);
+        }
+
+        .article-meta {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 0.5rem;
+        }
+
+        .category-sidebar {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .category-sidebar h5 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .category-list-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .category-list-item a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+        }
+
+        .category-list-item a:hover {
+            color: var(--text-color);
+        }
+
+        .no-articles {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sort-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sort-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .sort-button {
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .sort-button:hover {
+            background-color: var(--bg-card);
+            color: var(--text-color);
+        }
+
+        .sort-button.active {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 네비게이션 바 -->
+    <nav class="top-nav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-left">
+                    <button class="menu-button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="main-nav">
+                        <a class="nav-brand" th:href="@{/}">News Curation</a>
+                        <div class="category-menu">
+                            <a class="category-item" th:classappend="${category == 'AI'} ? 'active' : ''" th:href="@{/category/AI}">AI</a>
+                            <a class="category-item" th:classappend="${category == '하드웨어'} ? 'active' : ''" th:href="@{/category/하드웨어}">하드웨어</a>
+                            <a class="category-item" th:classappend="${category == '데이터'} ? 'active' : ''" th:href="@{/category/데이터}">데이터</a>
+                            <a class="category-item" th:classappend="${category == '보안'} ? 'active' : ''" th:href="@{/category/보안}">보안</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-right">
+                    <a class="icon-button" th:href="@{/analytics}">
+                        <i class="fas fa-chart-bar"></i>
+                    </a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/search}">검색</a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/login}">로그인</a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/user}">마이</a>
+                    <span class="divider">|</span>
+                    <a class="nav-button" th:href="@{/bookmark}">북마크</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="category-header">
+                        <h1 class="category-title" th:text="${category} + ' 뉴스'">카테고리 뉴스</h1>
+                        <div class="sort-options">
+                            <div class="sort-group">
+                                <span class="sort-label">정렬:</span>
+                                <a th:href="@{/category/{category}(category=${category}, sort='latest', direction=${currentDirection})}"
+                                   th:class="${currentSort == 'latest'} ? 'sort-button active' : 'sort-button'"
+                                   class="sort-button">최신순</a>
+                                <a th:href="@{/category/{category}(category=${category}, sort='views', direction=${currentDirection})}"
+                                   th:class="${currentSort == 'views'} ? 'sort-button active' : 'sort-button'"
+                                   class="sort-button">조회수순</a>
+                                <a th:href="@{/category/{category}(category=${category}, sort='title', direction=${currentDirection})}"
+                                   th:class="${currentSort == 'title'} ? 'sort-button active' : 'sort-button'"
+                                   class="sort-button">제목순</a>
+                            </div>
+                            <div class="sort-group">
+                                <span class="sort-label">방향:</span>
+                                <a th:href="@{/category/{category}(category=${category}, sort=${currentSort}, direction='desc')}"
+                                   th:class="${currentDirection == 'desc'} ? 'sort-button active' : 'sort-button'"
+                                   class="sort-button">내림차순</a>
+                                <a th:href="@{/category/{category}(category=${category}, sort=${currentSort}, direction='asc')}"
+                                   th:class="${currentDirection == 'asc'} ? 'sort-button active' : 'sort-button'"
+                                   class="sort-button">오름차순</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div th:if="${articles.empty}" class="no-articles">
+                        해당 카테고리의 뉴스가 없습니다.
+                    </div>
+                    
+                    <div th:each="article : ${articles}" class="article-card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a th:href="${article.url}"
+                                   class="article-title"
+                                   target="_blank"
+                                   th:text="${article.title}">기사 제목</a>
+                            </h5>
+                            <div class="news-tags">
+                                <span class="news-tag" th:each="kw : ${#strings.arraySplit(article.keywords, ',')}" th:text="'#' + ${kw.trim()}">#키워드</span>
+                            </div>
+                            <p class="card-text" th:text="${article.description}">기사 요약</p>
+                            <div class="article-meta">
+                                <span th:text="${article.sourceName}">출처</span> |
+                                <span th:text="${#temporals.format(article.publishedAt, 'yyyy-MM-dd HH:mm')}">발행일</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="category-sidebar">
+                        <h5>카테고리</h5>
+                        <ul class="category-list">
+                            <li class="category-list-item">
+                                <a href="/category/AI">AI 뉴스</a>
+                            </li>
+                            <li class="category-list-item">
+                                <a href="/category/데이터">빅데이터 뉴스</a>
+                            </li>
+                            <li class="category-list-item">
+                                <a href="/category/보안">보안 뉴스</a>
+                            </li>
+                            <li class="category-list-item">
+                                <a href="/category/하드웨어">하드웨어 뉴스</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

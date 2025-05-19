@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.ac.dankook.cs.curation.entity.BigdataArticle;
@@ -14,36 +15,49 @@ import kr.ac.dankook.cs.curation.repository.BigdataArticleRepository;
  */
 @Service
 public class BigdataArticleService {
-    private final BigdataArticleRepository repository;
-
-    public BigdataArticleService(BigdataArticleRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private BigdataArticleRepository bigdataArticleRepository;
 
     /**
      * 동일한 URL의 기사가 없을 경우에만 저장
      */
     public BigdataArticle saveIfNotExists(BigdataArticle article) {
-        Optional<BigdataArticle> existing = repository.findByUrl(article.getUrl());
+        Optional<BigdataArticle> existing = bigdataArticleRepository.findByUrl(article.getUrl());
         if (existing.isPresent()) {
             return existing.get();
         }
         article.setRecommendedAt(LocalDateTime.now());
-        return repository.save(article);
+        return bigdataArticleRepository.save(article);
     }
 
     /** 전체 목록 조회 */
     public List<BigdataArticle> findAll() {
-        return repository.findAll();
+        return bigdataArticleRepository.findAll();
     }
 
     /** ID로 단건 조회 */
     public Optional<BigdataArticle> findById(Long id) {
-        return repository.findById(id);
+        return bigdataArticleRepository.findById(id);
     }
 
     /** ID로 삭제 */
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        bigdataArticleRepository.deleteById(id);
+    }
+
+    public List<BigdataArticle> getAllArticles() {
+        return bigdataArticleRepository.findAll();
+    }
+
+    public List<BigdataArticle> getLatestArticles(int limit) {
+        return bigdataArticleRepository.findTopByOrderByPublishedAtDesc(limit);
+    }
+
+    public List<BigdataArticle> getTopViewedArticles(int limit) {
+        return bigdataArticleRepository.findTopByOrderByViewsDesc(limit);
+    }
+
+    public BigdataArticle saveArticle(BigdataArticle article) {
+        return bigdataArticleRepository.save(article);
     }
 }

@@ -5,24 +5,27 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import kr.co.shineware.nlp.komoran.core.Komoran;
+import kr.co.shineware.nlp.komoran.model.Token;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 뉴스 큐레이션 애플리케이션의 메인 클래스
  * - @SpringBootApplication: 컴포넌트 스캔, 설정, 자동 설정 활성화
  * - @EnableScheduling: 스케줄링 작업 (@Scheduled 메서드) 활성화
  */
-@SpringBootApplication(
-  exclude = {
+@SpringBootApplication(exclude = {
     SecurityAutoConfiguration.class,
     UserDetailsServiceAutoConfiguration.class
-  }
-)
-//이 부분 있어야 로그인 창 넘기고 조회 가능함
+})
+// 이 부분 있어야 로그인 창 넘기고 조회 가능함
 @EnableScheduling // 스케줄링 기능 활성화 (@Scheduled 사용 가능하게 함)
 public class CurationApplication {
 
-    public static void main(String[] args) {
-        // Spring Boot 애플리케이션 실행
-        SpringApplication.run(CurationApplication.class, args);
-    }
+  public static void main(String[] args) {
+    // Spring Boot 애플리케이션 실행
+    SpringApplication.run(CurationApplication.class, args);
+  }
 }
