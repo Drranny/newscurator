@@ -1,0 +1,46 @@
+<!-- templates/changepw.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>비밀번호 변경</title>
+</head>
+<body>
+  <h1>비밀번호 변경</h1>
+  <form id="changepwForm">
+    <label>아이디: <input type="text" name="userId" required /></label><br/>
+    <label>새 비밀번호: <input type="password" name="newPassword" required /></label><br/>
+    <label>비밀번호 확인: <input type="password" name="confirmPassword" required /></label><br/>
+    <button type="submit">변경하기</button>
+  </form>
+  <div id="message"></div>
+  <script>
+    document.getElementById('changepwForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const f = e.target;
+      const data = {
+        userId: f.userId.value,
+        newPassword: f.newPassword.value,
+        confirmPassword: f.confirmPassword.value
+      };
+      const res = await fetch('/auth/changepw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      const div = document.getElementById('message');
+      if (res.ok) {
+        // 성공 시 서버가 내려준 loginUrl 을 링크로 표시
+        div.innerHTML = `
+          <p>${json.message}</p>
+          <p><a href="${json.loginUrl}">로그인 페이지로 이동</a></p>
+        `;
+      } else {
+        // 에러 메시지
+        div.textContent = json.error;
+      }
+    });
+  </script>
+</body>
+</html>

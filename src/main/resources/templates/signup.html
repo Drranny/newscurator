@@ -1,0 +1,45 @@
+<!-- templates/signup.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입</title>
+</head>
+<body>
+  <h1>회원가입</h1>
+  <form id="signupForm">
+    <label>아이디: <input type="text" name="userId" required /></label><br/>
+    <label>비밀번호: <input type="password" name="password" required /></label><br/>
+    <label>비밀번호 확인: <input type="password" name="confirmPassword" required /></label><br/>
+    <label>이메일: <input type="email" name="email" required /></label><br/>
+    <label>이름: <input type="text" name="name" required /></label><br/>
+    <button type="submit">회원가입</button>
+  </form>
+  <div id="message"></div>
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        userId: form.userId.value,
+        password: form.password.value,
+        confirmPassword: form.confirmPassword.value,
+        email: form.email.value,
+        name: form.name.value
+      };
+      const res = await fetch('/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      const msgDiv = document.getElementById('message');
+      if (res.status === 201) {
+        msgDiv.innerHTML = `<p>${json.message}</p><p><a href="${json.verifyUrl}">이메일 인증하러 가기</a></p>`;
+      } else {
+        msgDiv.textContent = json.error;
+      }
+    });
+  </script>
+</body>
+</html>
