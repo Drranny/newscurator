@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
   <title>비밀번호 초기화</title>
   <style>
     .error { color: #c00; margin: 1rem 0; }
@@ -11,24 +11,19 @@
 <body>
   <h1>비밀번호 초기화</h1>
 
-  <!-- 실패 메시지 -->
   <div th:if="${errorMsg}" class="error" th:text="${errorMsg}"></div>
-  <!-- 성공 메시지 -->
   <div th:if="${message}"  class="info"  th:text="${message}"></div>
 
-  <form th:action="@{/auth/resetpw}" method="post">
-    <label>아이디:
-      <input type="text" name="userId" required/>
+  <form th:action="@{/auth/resetpw}"
+        th:object="${passwordResetRequest}"
+        method="post">
+    <label>아이디:<br/>
+      <input type="text" th:field="*{userId}" placeholder="가입하신 아이디" required/>
     </label><br/>
-    <label>이메일:
-      <input type="email" name="email" required/>
-    </label><br/>
-    <button type="submit">임시 비밀번호 발급</button>
+    <label>이메일:<br/>
+      <input type="email" th:field="*{email}" placeholder="가입하신 이메일" required/>
+    </label><br/><br/>
+    <button type="submit">초기화 요청</button>
   </form>
-
-  <!-- 성공 시 loginUrl 이 파라미터로 넘어오면 링크 표시 -->
-  <p th:if="${loginUrl}">
-    <a th:href="${loginUrl}">로그인 페이지로 이동</a>
-  </p>
 </body>
 </html>
