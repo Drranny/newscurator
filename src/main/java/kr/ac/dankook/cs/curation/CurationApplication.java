@@ -11,16 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * 뉴스 큐레이션 애플리케이션의 메인 클래스
- * - @SpringBootApplication: 컴포넌트 스캔, 설정, 자동 설정 활성화
- * - @EnableScheduling: 스케줄링 작업 (@Scheduled 메서드) 활성화
- */
-@SpringBootApplication(exclude = {
-    SecurityAutoConfiguration.class,
-    UserDetailsServiceAutoConfiguration.class
-})
-// 이 부분 있어야 로그인 창 넘기고 조회 가능함
+
+@SpringBootApplication
 @EnableScheduling // 스케줄링 기능 활성화 (@Scheduled 사용 가능하게 함)
 public class CurationApplication {
 
