@@ -1,40 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <title>이메일 인증</title>
   <style>
-    body { font-family: sans-serif; padding: 1rem; }
-    form { margin-top: 1rem; }
-    label { display: block; margin-bottom: 0.5rem; }
-    input { width: 100%; padding: 0.5rem; margin-bottom: 1rem; }
     .error { color: #c00; margin-bottom: 1rem; }
-    button { padding: 0.5rem 1rem; }
-    .links { margin-top: 1.5rem; }
-    .links a { margin-right: 1rem; }
   </style>
 </head>
 <body>
   <h1>이메일 인증</h1>
 
-  <!-- 에러 메시지 노출 -->
-  <div th:if="${error}" class="error">
-    <p th:text="${error}"></p>
-  </div>
+  <!-- FlashAttribute errorMsg -->
+  <div th:if="${errorMsg}" class="error" th:text="${errorMsg}"></div>
 
   <form th:action="@{/auth/verify}" method="post">
-    <label for="userId">
-      아이디
-      <input id="userId" type="text" name="userId" placeholder="가입하신 아이디(로그인ID)" required />
-    </label>
-
-    <label for="code">
-      인증 코드
-      <input id="code" type="text" name="code" placeholder="이메일로 받은 인증 코드" required />
-    </label>
-
+    <label>
+      아이디<br/>
+      <input type="text"
+             name="userId"
+             placeholder="가입하신 아이디"
+             th:value="${userId}"  <!-- 재전송된 userId 유지 -->
+             required/>
+    </label><br/>
+    <label>
+      인증 코드<br/>
+      <input type="text"
+             name="code"
+             placeholder="이메일로 받은 코드"
+             required/>
+    </label><br/>
     <button type="submit">인증 완료</button>
   </form>
-  </div>
+
+  <p>
+    인증 코드가 없으신가요?
+    <a th:href="@{/auth/verify/resend(userId=${userId})}">인증 코드 재전송</a>
+  </p>
 </body>
 </html>
