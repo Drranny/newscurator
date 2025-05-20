@@ -32,9 +32,29 @@
     <button type="submit">인증 완료</button>
   </form>
 
-  <p>
-    인증 코드가 없으신가요?
-    <a th:href="@{/auth/verify/resend(userId=${userId})}">인증 코드 재전송</a>
-  </p>
+  <div class="resend-form">
+    <h2>인증 코드 재전송</h2>
+    <p>아이디(또는 이메일)를 입력하시면, 해당 계정으로 인증 코드를 다시 보냅니다.</p>
+    <form th:action="@{/auth/verify/resend}" method="get">
+      <label>
+        아이디<br/>
+        <input type="text"
+               name="userId"
+               placeholder="가입하신 아이디"
+               required/>
+      </label><br/>
+      <!-- 만약 이메일로도 받고 싶다면 아래를 추가 -->
+      <!--
+      <label>
+        이메일<br/>
+        <input type="email"
+               name="email"
+               placeholder="가입하신 이메일"
+               required/>
+      </label><br/>
+      -->
+      <button type="submit">인증 코드 재전송</button>
+    </form>
+  </div>
 </body>
 </html>
