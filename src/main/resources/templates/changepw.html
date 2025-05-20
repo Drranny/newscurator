@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
   <title>비밀번호 변경</title>
   <style>
     .error { color: #c00; margin: 1rem 0; }
@@ -11,24 +11,23 @@
 <body>
   <h1>비밀번호 변경</h1>
 
-  <div th:if="${errorMsg}" class="error" th:text="${errorMsg}"></div>
-  <div th:if="${message}"  class="info"  th:text="${message}"></div>
+  <div th:if="${errorMsg}" class="error"    th:text="${errorMsg}"></div>
+  <div th:if="${message}"  class="info"     th:text="${message}"></div>
 
-  <form th:action="@{/auth/changepw}" method="post">
-    <label>아이디:
-      <input type="text" name="userId" required/>
+  <form th:action="@{/auth/changepw}"th:object="${passwordChangeRequest}"method="post">
+    <label>아이디:<br/>
+      <input type="text" th:field="*{userId}" required/>
     </label><br/>
-    <label>새 비밀번호:
-      <input type="password" name="newPassword" required/>
+    <label>기존 비밀번호:<br/>
+      <input type="password" th:field="*{oldPassword}" required/>
     </label><br/>
-    <label>비밀번호 확인:
-      <input type="password" name="confirmPassword" required/>
+    <label>새 비밀번호:<br/>
+      <input type="password" th:field="*{newPassword}" required/>
     </label><br/>
+    <label>비밀번호 확인:<br/>
+      <input type="password" th:field="*{confirmPassword}" required/>
+    </label><br/><br/>
     <button type="submit">변경하기</button>
   </form>
-
-  <p th:if="${loginUrl}">
-    <a th:href="${loginUrl}">로그인 페이지로 이동</a>
-  </p>
 </body>
 </html>
