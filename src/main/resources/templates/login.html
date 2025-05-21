@@ -2,37 +2,171 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    .error { color: #c00; margin: 1rem 0; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    .error {
+      color: #dc3545;
+      background: #f8d7da;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4a90e2;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #357abd;
+    }
+
+    nav {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    nav a {
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      margin: 0 10px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #4a90e2;
+    }
+
+    .social-login {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .social-login button {
+      margin-bottom: 10px;
+      background: #fff;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .social-login button:hover {
+      background: #f5f5f5;
+    }
+
+    .google-btn {
+      background: #fff !important;
+      color: #757575 !important;
+    }
+
+    .kakao-btn {
+      background: #FEE500 !important;
+      color: #000000 !important;
+    }
   </style>
 </head>
 <body>
-  <h1>로그인</h1>
+  <div class="container">
+    <h1>로그인</h1>
 
-  <!-- FlashAttribute errorMsg -->
-  <div th:if="${errorMsg}" class="error" th:text="${errorMsg}"></div>
+    <div th:if="${errorMsg}" class="error" th:text="${errorMsg}"></div>
 
-  <form th:action="@{/auth/login}" method="post">
-    <label>아이디:
-      <input type="text" name="userId" required/>
-    </label><br/>
-    <label>비밀번호:
-      <input type="password" name="password" required/>
-    </label><br/>
-    <button type="submit">로그인</button>
-  </form>
+    <form th:action="@{/auth/login}" method="post">
+      <div class="form-group">
+        <label>아이디</label>
+        <input type="text" name="userId" required/>
+      </div>
+      <div class="form-group">
+        <label>비밀번호</label>
+        <input type="password" name="password" required/>
+      </div>
+      <button type="submit">로그인</button>
+    </form>
 
-  <nav>
-    <a th:href="@{/auth/changepw}">비밀번호 변경</a> |
-    <a th:href="@{/auth/resetpw}">비밀번호 초기화</a> |
-    <a th:href="@{/auth/signup}">회원가입</a> |
-    <a th:href="@{/auth/delete}">회원탈퇴</a>
-  </nav>
+    <nav>
+      <a th:href="@{/auth/changepw}">비밀번호 변경</a>
+      <a th:href="@{/auth/resetpw}">비밀번호 초기화</a>
+      <a th:href="@{/auth/signup}">회원가입</a>
+      <a th:href="@{/auth/delete}">회원탈퇴</a>
+    </nav>
 
-  <div>
-    <button onclick="location.href='/oauth2/authorization/google'">Google 로그인</button>
-    <button onclick="location.href='/oauth2/authorization/kakao'">Kakao 로그인</button>
+    <div class="social-login">
+      <button class="google-btn" onclick="location.href='/oauth2/authorization/google'">
+        <img src="https://www.google.com/favicon.ico" alt="Google" style="width: 20px; vertical-align: middle; margin-right: 10px;">
+        Google 로그인
+      </button>
+      <button class="kakao-btn" onclick="location.href='/oauth2/authorization/kakao'">
+        <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png" alt="Kakao" style="width: 20px; vertical-align: middle; margin-right: 10px;">
+        Kakao 로그인
+      </button>
+    </div>
   </div>
 </body>
 </html>
