@@ -32,3 +32,19 @@ SELECT * FROM security_articles;
 -- 하드웨어 기사
 SELECT * FROM hardware_articles;
 
+cd /당신의/프로젝트/경로   (vscode 안에서 하는거면 건너뛰기)
+git init
+
+
+git add .
+git commit -m "처음 커밋"
+
+
+git remote add origin https://github.com/Drranny/newscurator.git
+
+
+먼저 pull 해서 병합하고 push 해
+
+git pull --rebase origin main\ngit push -u origin main\n
+
+
