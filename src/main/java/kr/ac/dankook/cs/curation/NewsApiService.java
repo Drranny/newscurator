@@ -14,6 +14,7 @@ import kr.ac.dankook.cs.curation.repository.HardwareArticleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import kr.co.shineware.nlp.komoran.core.Komoran;
@@ -91,7 +92,7 @@ public class NewsApiService {
 
     public List<HardwareArticle> fetchHardwareKoreanNews() {
         try {
-            return fetchByKeyword("hardware OR 하드웨어", hwRepo, HardwareArticle::new);
+            return fetchByKeyword("hardware OR 하드웨어 OR CPU OR GPU OR 메모리 OR 반도체 OR 컴퓨터 OR 노트북 OR 서버 OR 마이크로프로세서 OR 마더보드 OR SSD OR HDD OR RAM OR ROM", hwRepo, HardwareArticle::new);
         } catch (IOException e) {
             throw new RuntimeException("Failed to fetch Hardware news", e);
         }
@@ -129,9 +130,12 @@ public class NewsApiService {
             articles.size());
 
         List<T> list = new ArrayList<>();
+        String category = "";
+        
         for (JsonNode n : articles) {
             T entity = supplier.get();
             if (entity instanceof AiArticle) {
+                category = "AI";
                 AiArticle a = (AiArticle) entity;
                 a.setTitle(n.path("title").asText());
                 a.setDescription(n.path("description").asText());
@@ -143,6 +147,7 @@ public class NewsApiService {
                 a.setCategory(keyword);
                 if (a.getUrl() != null && a.getUrl().length() <= 255 && !aiRepo.existsByUrl(a.getUrl())) list.add(entity);
             } else if (entity instanceof BigdataArticle) {
+                category = "빅데이터";
                 BigdataArticle b = (BigdataArticle) entity;
                 b.setTitle(n.path("title").asText());
                 b.setDescription(n.path("description").asText());
@@ -154,6 +159,7 @@ public class NewsApiService {
                 b.setCategory(keyword);
                 if (b.getUrl() != null && b.getUrl().length() <= 255 && !bdRepo.existsByUrl(b.getUrl())) list.add(entity);
             } else if (entity instanceof SecurityArticle) {
+                category = "보안";
                 SecurityArticle s = (SecurityArticle) entity;
                 s.setTitle(n.path("title").asText());
                 s.setDescription(n.path("description").asText());
@@ -166,6 +172,7 @@ public class NewsApiService {
                 s.setCategory(keyword);
                 if (s.getUrl() != null && s.getUrl().length() <= 255 && !secRepo.existsByUrl(s.getUrl())) list.add(entity);
             } else if (entity instanceof HardwareArticle) {
+                category = "하드웨어";
                 HardwareArticle h = (HardwareArticle) entity;
                 h.setTitle(n.path("title").asText());
                 h.setDescription(n.path("description").asText());
@@ -178,18 +185,59 @@ public class NewsApiService {
                 if (h.getUrl() != null && h.getUrl().length() <= 255 && !hwRepo.existsByUrl(h.getUrl())) list.add(entity);
             }
         }
+        
+        log.info("{} 카테고리 수집 결과: API 응답 기사 수={}, 중복 제외 후 저장된 기사 수={}", 
+            category, articles.size(), list.size());
+            
         return repo.saveAll(list);
     }
 
+    @Scheduled(cron = "0 0 9 * * ?")  // 매일 오전 9시에 실행
     public void fetchAllCategories() {
         try {
+            log.info("뉴스 수집 스케줄링 시작");
+            // 30일 이상 지난 기사 삭제
+            deleteOldArticles();
+            // 새로운 기사 수집
             fetchByKeyword("artificial intelligence OR AI OR 인공지능", aiRepo, AiArticle::new);
             fetchByKeyword("big data OR 빅데이터", bdRepo, BigdataArticle::new);
             fetchByKeyword("cybersecurity OR security OR 보안", secRepo, SecurityArticle::new);
-            fetchByKeyword("hardware OR 하드웨어", hwRepo, HardwareArticle::new);
+            fetchByKeyword("hardware OR 하드웨어 OR CPU OR GPU OR 메모리 OR 반도체 OR 컴퓨터 OR 노트북 OR 서버 OR 마이크로프로세서 OR 마더보드 OR SSD OR HDD OR RAM OR ROM", hwRepo, HardwareArticle::new);
+            log.info("뉴스 수집 스케줄링 완료");
         } catch (IOException e) {
+            log.error("뉴스 수집 중 오류 발생", e);
             throw new RuntimeException("Failed to fetch news categories", e);
         }
+    }
+
+    /**
+     * 30일 이상 지난 기사를 자동으로 삭제하는 메서드
+     */
+    private void deleteOldArticles() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        log.info("30일 이상 지난 기사 삭제 시작 (기준일: {})", thirtyDaysAgo);
+
+        // AI 기사 삭제
+        List<AiArticle> oldAiArticles = aiRepo.findByPublishedAtBefore(thirtyDaysAgo);
+        aiRepo.deleteAll(oldAiArticles);
+        log.info("AI 기사 삭제 완료: {}건", oldAiArticles.size());
+
+        // 빅데이터 기사 삭제
+        List<BigdataArticle> oldBdArticles = bdRepo.findByPublishedAtBefore(thirtyDaysAgo);
+        bdRepo.deleteAll(oldBdArticles);
+        log.info("빅데이터 기사 삭제 완료: {}건", oldBdArticles.size());
+
+        // 보안 기사 삭제
+        List<SecurityArticle> oldSecArticles = secRepo.findByPublishedAtBefore(thirtyDaysAgo);
+        secRepo.deleteAll(oldSecArticles);
+        log.info("보안 기사 삭제 완료: {}건", oldSecArticles.size());
+
+        // 하드웨어 기사 삭제
+        List<HardwareArticle> oldHwArticles = hwRepo.findByPublishedAtBefore(thirtyDaysAgo);
+        hwRepo.deleteAll(oldHwArticles);
+        log.info("하드웨어 기사 삭제 완료: {}건", oldHwArticles.size());
+
+        log.info("30일 이상 지난 기사 삭제 완료");
     }
 
     // 한글 포함 여부 체크 함수

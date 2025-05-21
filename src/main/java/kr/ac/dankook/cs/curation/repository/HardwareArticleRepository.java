@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,4 +45,6 @@ public interface HardwareArticleRepository extends JpaRepository<HardwareArticle
     
     @Query(value = "SELECT * FROM hardware_articles ORDER BY views DESC LIMIT ?1", nativeQuery = true)
     List<HardwareArticle> findTopByOrderByViewsDesc(int limit);
+
+    List<HardwareArticle> findByPublishedAtBefore(LocalDateTime date);
 }

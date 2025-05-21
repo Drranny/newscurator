@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,4 +45,6 @@ public interface SecurityArticleRepository extends JpaRepository<SecurityArticle
     
     @Query(value = "SELECT * FROM security_articles ORDER BY views DESC LIMIT ?1", nativeQuery = true)
     List<SecurityArticle> findTopByOrderByViewsDesc(int limit);
+
+    List<SecurityArticle> findByPublishedAtBefore(LocalDateTime date);
 }
