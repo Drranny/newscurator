@@ -60,4 +60,7 @@ public class SecurityArticle {
 
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private int views = 0; // 조회수 (기본값 0)
+
+    @Column(columnDefinition = "TEXT")
+    private String urlToImage; // 기사 이미지 URL
 }

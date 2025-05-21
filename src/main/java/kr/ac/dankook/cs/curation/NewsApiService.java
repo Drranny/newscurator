@@ -141,6 +141,7 @@ public class NewsApiService {
                 a.setDescription(n.path("description").asText());
                 a.setUrl(n.path("url").asText());
                 a.setAuthor(n.path("author").asText(null));
+                a.setUrlToImage(n.path("urlToImage").asText(null));
                 String p = n.path("publishedAt").asText();
                 if (!p.isEmpty()) a.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 a.setRecommendedAt(LocalDateTime.now());
@@ -153,6 +154,7 @@ public class NewsApiService {
                 b.setDescription(n.path("description").asText());
                 b.setUrl(n.path("url").asText());
                 b.setAuthor(n.path("author").asText(null));
+                b.setUrlToImage(n.path("urlToImage").asText(null));
                 String p = n.path("publishedAt").asText();
                 if (!p.isEmpty()) b.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 b.setRecommendedAt(LocalDateTime.now());
@@ -166,6 +168,7 @@ public class NewsApiService {
                 s.setUrl(n.path("url").asText());
                 s.setUrlOriginal(n.path("url").asText());
                 s.setAuthor(n.path("author").asText(null));
+                s.setUrlToImage(n.path("urlToImage").asText(null));
                 String p = n.path("publishedAt").asText();
                 if (!p.isEmpty()) s.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 s.setRecommendedAt(LocalDateTime.now());
@@ -178,6 +181,7 @@ public class NewsApiService {
                 h.setDescription(n.path("description").asText());
                 h.setUrl(n.path("url").asText());
                 h.setAuthor(n.path("author").asText(null));
+                h.setUrlToImage(n.path("urlToImage").asText(null));
                 String p = n.path("publishedAt").asText();
                 if (!p.isEmpty()) h.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 h.setRecommendedAt(LocalDateTime.now());

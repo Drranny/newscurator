@@ -786,7 +786,7 @@
                     <div class="slider-wrapper">
                         <div class="slider-track" id="sliderTrack">
                             <div th:each="article, stat : ${articles}" th:if="${stat.index < 3}" class="slide-item">
-                                <img th:src="@{/img/news{index}.jpg(index=${stat.index + 1})}" 
+                                <img th:src="${article.urlToImage != null ? article.urlToImage : '/api/placeholder/500/400'}" 
                                      src="/api/placeholder/500/400" 
                                      class="slide-image" 
                                      alt="News Image">
@@ -839,7 +839,7 @@
                              th:class="${stat.index >= 0 and stat.index < 8} ? 'news-item' : 'news-item hidden'"
                              th:if="${stat.index < 20}">
                             <a th:href="${article.url}">
-                                <img th:src="@{/img/news{index}.jpg(index=${(stat.index % 5) + 1})}" 
+                                <img th:src="${article.urlToImage != null ? article.urlToImage : '/api/placeholder/300/200'}" 
                                      src="/api/placeholder/300/200" 
                                      class="news-image" 
                                      alt="News Image">
@@ -884,7 +884,7 @@
                              th:class="'news-item'"
                              th:if="${stat.index >= 8 and stat.index < 12}">
                             <a th:href="${article.url}">
-                                <img th:src="@{/img/news{index}.jpg(index=${(stat.index % 5) + 1})}" 
+                                <img th:src="${article.urlToImage != null ? article.urlToImage : '/api/placeholder/300/200'}" 
                                      src="/api/placeholder/300/200" 
                                      class="news-image" 
                                      alt="News Image">
