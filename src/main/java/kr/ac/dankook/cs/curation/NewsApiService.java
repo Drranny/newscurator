@@ -103,32 +103,13 @@ public class NewsApiService {
             org.springframework.data.jpa.repository.JpaRepository<T, Long> repo,
             java.util.function.Supplier<T> supplier
     ) throws IOException {
-        String url = String.format(
-            "%s?q=%s&from=%s&to=%s&sortBy=relevancy&pageSize=100&language=ko&apiKey=%s",
-            config.getApiUrl(),
-            URLEncoder.encode(keyword, StandardCharsets.UTF_8),
-            config.getFromDate(),
-            config.getToDate(),
-            config.getApiKey()
-        );
-        log.info("API Request URL: {}", url);
+        String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+        String url = String.format("%s?q=%s&from=%s&to=%s&language=ko&sortBy=publishedAt&apiKey=%s",
+                config.getApiUrl(), encodedKeyword, config.getFromDate(), config.getToDate(), config.getApiKey());
+        
         String response = restTemplate.getForObject(url, String.class);
-        log.info("API Response: {}", response);
         JsonNode root = mapper.readTree(response);
-        if (root.has("status") && !"ok".equals(root.get("status").asText())) {
-            log.error("API Error - Code: {}, Message: {}",
-                root.path("code").asText(),
-                root.path("message").asText());
-            throw new RuntimeException("NewsAPI error: " + root.path("message").asText());
-        }
         JsonNode articles = root.path("articles");
-
-        log.info("FetchByKeyword 키워드='{}', 검색기간={} ~ {}, 기사 건수={}",
-            keyword,
-            config.getFromDate(),
-            config.getToDate(),
-            articles.size());
-
         List<T> list = new ArrayList<>();
         String category = "";
         
@@ -146,6 +127,16 @@ public class NewsApiService {
                 if (!p.isEmpty()) a.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 a.setRecommendedAt(LocalDateTime.now());
                 a.setCategory(keyword);
+                
+                // 새로운 기사에 대해 키워드 추출
+                String text = a.getTitle() + " " + (a.getDescription() != null ? a.getDescription() : "");
+                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                        .filter(t -> t.getPos().startsWith("NN"))
+                        .map(Token::getMorph)
+                        .collect(Collectors.toSet());
+                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                a.setKeywords(keywordStr);
+                
                 if (a.getUrl() != null && a.getUrl().length() <= 255 && !aiRepo.existsByUrl(a.getUrl())) list.add(entity);
             } else if (entity instanceof BigdataArticle) {
                 category = "빅데이터";
@@ -159,6 +150,16 @@ public class NewsApiService {
                 if (!p.isEmpty()) b.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 b.setRecommendedAt(LocalDateTime.now());
                 b.setCategory(keyword);
+                
+                // 새로운 기사에 대해 키워드 추출
+                String text = b.getTitle() + " " + (b.getDescription() != null ? b.getDescription() : "");
+                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                        .filter(t -> t.getPos().startsWith("NN"))
+                        .map(Token::getMorph)
+                        .collect(Collectors.toSet());
+                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                b.setKeywords(keywordStr);
+                
                 if (b.getUrl() != null && b.getUrl().length() <= 255 && !bdRepo.existsByUrl(b.getUrl())) list.add(entity);
             } else if (entity instanceof SecurityArticle) {
                 category = "보안";
@@ -173,6 +174,16 @@ public class NewsApiService {
                 if (!p.isEmpty()) s.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 s.setRecommendedAt(LocalDateTime.now());
                 s.setCategory(keyword);
+                
+                // 새로운 기사에 대해 키워드 추출
+                String text = s.getTitle() + " " + (s.getDescription() != null ? s.getDescription() : "");
+                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                        .filter(t -> t.getPos().startsWith("NN"))
+                        .map(Token::getMorph)
+                        .collect(Collectors.toSet());
+                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                s.setKeywords(keywordStr);
+                
                 if (s.getUrl() != null && s.getUrl().length() <= 255 && !secRepo.existsByUrl(s.getUrl())) list.add(entity);
             } else if (entity instanceof HardwareArticle) {
                 category = "하드웨어";
@@ -186,6 +197,16 @@ public class NewsApiService {
                 if (!p.isEmpty()) h.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
                 h.setRecommendedAt(LocalDateTime.now());
                 h.setCategory(keyword);
+                
+                // 새로운 기사에 대해 키워드 추출
+                String text = h.getTitle() + " " + (h.getDescription() != null ? h.getDescription() : "");
+                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                        .filter(t -> t.getPos().startsWith("NN"))
+                        .map(Token::getMorph)
+                        .collect(Collectors.toSet());
+                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                h.setKeywords(keywordStr);
+                
                 if (h.getUrl() != null && h.getUrl().length() <= 255 && !hwRepo.existsByUrl(h.getUrl())) list.add(entity);
             }
         }
@@ -291,10 +312,12 @@ public class NewsApiService {
     }
 
     /**
-     * Komoran을 사용해 모든 기사에 대해 title+description에서 명사 키워드를 추출하여 keywords 필드에 저장
+     * 모든 기사의 키워드를 추출하고 저장하는 메서드
      */
     public void extractAndSaveKeywordsForAllArticles() {
-        // AI 기사
+        log.info("Starting keyword extraction for all articles...");
+        
+        // AI 기사 키워드 추출
         List<AiArticle> aiArticles = aiRepo.findAll();
         for (AiArticle article : aiArticles) {
             String text = (article.getTitle() == null ? "" : article.getTitle()) + " " +
@@ -307,7 +330,9 @@ public class NewsApiService {
             article.setKeywords(keywordStr);
             aiRepo.save(article);
         }
-        // 빅데이터 기사
+        log.info("Completed AI articles keyword extraction. Processed {} articles.", aiArticles.size());
+
+        // 빅데이터 기사 키워드 추출
         List<BigdataArticle> bdArticles = bdRepo.findAll();
         for (BigdataArticle article : bdArticles) {
             String text = (article.getTitle() == null ? "" : article.getTitle()) + " " +
@@ -320,7 +345,9 @@ public class NewsApiService {
             article.setKeywords(keywordStr);
             bdRepo.save(article);
         }
-        // 보안 기사
+        log.info("Completed Bigdata articles keyword extraction. Processed {} articles.", bdArticles.size());
+
+        // 보안 기사 키워드 추출
         List<SecurityArticle> secArticles = secRepo.findAll();
         for (SecurityArticle article : secArticles) {
             String text = (article.getTitle() == null ? "" : article.getTitle()) + " " +
@@ -333,7 +360,9 @@ public class NewsApiService {
             article.setKeywords(keywordStr);
             secRepo.save(article);
         }
-        // 하드웨어 기사
+        log.info("Completed Security articles keyword extraction. Processed {} articles.", secArticles.size());
+
+        // 하드웨어 기사 키워드 추출
         List<HardwareArticle> hwArticles = hwRepo.findAll();
         for (HardwareArticle article : hwArticles) {
             String text = (article.getTitle() == null ? "" : article.getTitle()) + " " +
@@ -346,5 +375,8 @@ public class NewsApiService {
             article.setKeywords(keywordStr);
             hwRepo.save(article);
         }
+        log.info("Completed Hardware articles keyword extraction. Processed {} articles.", hwArticles.size());
+
+        log.info("Completed keyword extraction for all articles.");
     }
 }
