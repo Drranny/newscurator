@@ -49,17 +49,14 @@ public class FetchController {
         }
     }
 
-    /**
-     * GET /api/fetch/extract-keywords
-     * Komoran으로 모든 기사에 대해 키워드 추출 및 저장
-     */
-    @GetMapping("/extract-keywords")
-    public ResponseEntity<String> extractKeywords() {
-        try {
-            newsApiService.extractAndSaveKeywordsForAllArticles();
-            return ResponseEntity.ok("모든 기사에 대해 키워드 추출 및 저장 완료");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("키워드 추출 중 오류: " + e.getMessage());
-        }
-    }
+    // 수동 키워드 추출 엔드포인트 제거
+    // @GetMapping("/extract-keywords")
+    // public ResponseEntity<String> extractKeywords() {
+    //     try {
+    //         newsApiService.extractAndSaveKeywordsForAllArticles();
+    //         return ResponseEntity.ok("모든 기사에 대해 키워드 추출 및 저장 완료");
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(500).body("키워드 추출 중 오류: " + e.getMessage());
+    //     }
+    // }
 }
