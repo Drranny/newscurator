@@ -41,7 +41,35 @@ public class CurationController {
 
     /** 메인 페이지 */
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        // 각 카테고리별 최신 뉴스 3개씩
+        List<AiArticle> aiNews = aiRepo.findTopByOrderByPublishedAtDesc(3);
+        List<BigdataArticle> bigdataNews = bdRepo.findTopByOrderByPublishedAtDesc(3);
+        List<SecurityArticle> securityNews = secRepo.findTopByOrderByPublishedAtDesc(3);
+        List<HardwareArticle> hardwareNews = hwRepo.findTopByOrderByPublishedAtDesc(3);
+
+        // 추천 뉴스: 카테고리별로 1개씩 섞어서 최대 12개
+        List<Object> recommendedNews = new java.util.ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            if (aiNews.size() > i) recommendedNews.add(aiNews.get(i));
+            if (bigdataNews.size() > i) recommendedNews.add(bigdataNews.get(i));
+            if (securityNews.size() > i) recommendedNews.add(securityNews.get(i));
+            if (hardwareNews.size() > i) recommendedNews.add(hardwareNews.get(i));
+        }
+
+        // 랭킹 뉴스: 각 카테고리별 조회수 1위
+        List<Object> topViewedNews = new java.util.ArrayList<>();
+        List<AiArticle> aiTop = aiRepo.findTopByOrderByViewsDesc(1);
+        List<BigdataArticle> bdTop = bdRepo.findTopByOrderByViewsDesc(1);
+        List<SecurityArticle> secTop = secRepo.findTopByOrderByViewsDesc(1);
+        List<HardwareArticle> hwTop = hwRepo.findTopByOrderByViewsDesc(1);
+        if (!aiTop.isEmpty()) topViewedNews.add(aiTop.get(0));
+        if (!bdTop.isEmpty()) topViewedNews.add(bdTop.get(0));
+        if (!secTop.isEmpty()) topViewedNews.add(secTop.get(0));
+        if (!hwTop.isEmpty()) topViewedNews.add(hwTop.get(0));
+
+        model.addAttribute("recommendedNews", recommendedNews);
+        model.addAttribute("topViewedNews", topViewedNews);
         return "index";
     }
 
