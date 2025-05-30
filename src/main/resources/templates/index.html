@@ -8,8 +8,10 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         :root {
-            --primary-color: #0066cc;
-            --primary-hover: #0056b3;
+            --primary-color: #0ABAB5;
+            --primary-hover: #099c98;
+            --secondary-color: #4a90e2;
+            --accent-color: #00d4ff;
             --text-color: #f7f7f7;
             --text-secondary: #a0a0a0;
             --bg-color: #000000;
@@ -17,15 +19,44 @@
             --bg-card: #222222;
             --bg-dark: #111111;
             --border-color: #333333;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background: linear-gradient(135deg, var(--bg-color) 0%, #0a0a0a 100%);
             color: var(--text-color);
             line-height: 1.6;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* 배경 파티클 효과 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 102, 204, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .container {
@@ -34,10 +65,14 @@
             padding: 0 1rem;
         }
 
-        /* 네비게이션 스타일 */
+        /* 네비게이션 스타일 개선 */
         .top-nav {
-            background-color: var(--bg-color);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .nav-wrapper {
@@ -58,28 +93,36 @@
             background: none;
             border: none;
             cursor: pointer;
+            transition: var(--transition-smooth);
+            border-radius: 8px;
         }
 
         .menu-button:hover {
             color: var(--text-color);
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
         }
 
         .main-nav {
             display: flex;
-            align-items: center; /* 추가: 세로 중앙 정렬 */
-
+            align-items: center;
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
         }
 
         .nav-logo img {
             height: 2.2rem;
             vertical-align: middle;
             margin-right: 0.5rem;
-
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
         }
 
         .nav-brand {
@@ -88,39 +131,72 @@
             color: var(--text-color);
             text-decoration: none;
             font-size: 1.75rem;
-            margin-right: 1rem; /* 추가: 브랜드와 카테고리 사이 간격 */
+            margin-right: 1rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
         }
 
         .category-menu {
             display: flex;
-            gap: 1.5rem; /* 수정: 간격 줄임 */
-            margin-left: 0; /* 수정: 마진 제거 */
-            align-items: center; /* 추가: 세로 중앙 정렬 */
+            gap: 1.5rem;
+            margin-left: 0;
+            align-items: center;
         }
 
         .category-item {
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
             color: var(--text-secondary);
             text-decoration: none;
+            border-radius: 20px;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .category-item:hover::before {
+            left: 0;
         }
 
         .category-item:hover, .category-item.active {
             color: var(--text-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
         }
 
         .nav-right {
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
 
-        .icon-button {
-            padding: 0.5rem;
+        .icon-button, .nav-button {
+            padding: 0.5rem 1rem;
             color: var(--text-secondary);
             text-decoration: none;
+            border-radius: 15px;
+            transition: var(--transition-smooth);
+            position: relative;
         }
 
-        .icon-button:hover {
+        .icon-button:hover, .nav-button:hover {
             color: var(--text-color);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
 
         .divider {
@@ -128,79 +204,18 @@
             margin: 0 0.25rem;
         }
 
-        .nav-button {
-            padding: 0.5rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-        }
-
-        .nav-button:hover {
-            color: var(--text-color);
-        }
-
-        /* 검색 영역 스타일 */
-        .search-area {
-            background-color: var(--bg-color);
-            padding: 1.5rem 0;
-        }
-
-        .search-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .site-title {
-            font-size: 2rem;
-            cursor: pointer;
-            margin: 0;
-        }
-
-        .site-title a {
-            color: var(--text-color);
-            text-decoration: none;
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 0.5rem 2.5rem 0.5rem 1rem;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-        }
-
-        .search-button {
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 100%;
-            padding: 0 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: var(--text-secondary);
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* 카테고리 내비게이션 스타일 */
+        /* 카테고리 내비게이션 개선 */
         .category-nav {
-            background-color: var(--bg-color);
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
 
         .category-wrapper {
             display: flex;
-            justify-content: space-between; /* 좌우 정렬 */
-            align-items: center;            /* 수직 중앙 정렬 */
+            justify-content: space-between;
+            align-items: center;
             padding: 1rem 0;
         }
 
@@ -214,167 +229,128 @@
             white-space: nowrap;
             color: var(--text-secondary);
             text-decoration: none;
-            margin-right: 1.5rem; /* 항목 간 간격 추가 */
+            margin-right: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            transition: var(--transition-smooth);
+            position: relative;
         }
 
         .nav-item:last-child {
-            margin-right: 0; /* 마지막 항목은 간격 없음 */
+            margin-right: 0;
         }
 
         .nav-item:hover, .nav-item.active {
             color: var(--text-color);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
-        
+
+        /* 타임라인 버튼 특별 스타일 개선 */
+        .nav-item.timeline-btn {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+        }
+
+        .nav-item.timeline-btn:hover {
+            background: var(--gradient-accent);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .nav-item.timeline-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-item.timeline-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-item.timeline-btn i {
+            margin-right: 0.3rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
        
         .search-box {
             position: relative;
             width: 100%;
-            max-width: 300px; /* 검색창 너비 조정 */
-            margin-left: auto; /* 우측 정렬 */
+            max-width: 300px;
+            margin-left: auto;
         }
 
         .search-box input {
             width: 100%;
             padding: 0.5rem 2.5rem 0.5rem 1rem;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
+            background: rgba(34, 34, 34, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
             color: var(--text-color);
-            border-radius: 4px; /* 모서리 둥글게 */
+            border-radius: 25px;
+            transition: var(--transition-smooth);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(0, 102, 204, 0.3);
+            background: rgba(34, 34, 34, 0.95);
         }
 
         .search-button {
             position: absolute;
-            right: 0;
-            top: 0;
-            height: 100%;
-            padding: 0 0.75rem; /* 패딩 줄임 */
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: calc(100% - 10px);
+            padding: 0 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-secondary);
-            background: none;
+            background: var(--gradient-primary);
             border: none;
+            border-radius: 20px;
             cursor: pointer;
+            transition: var(--transition-smooth);
         }
 
-        /* 슬라이더 스타일 */
+        .search-button:hover {
+            background: var(--gradient-accent);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        /* 슬라이더 스타일 개선 */
         .main-slider {
             position: relative;
             width: 100%;
             height: 400px;
             margin-bottom: 3rem;
             overflow: hidden;
-            border-radius: 8px;
-        }
-
-        .main-slider-placeholder {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            margin-bottom: 3rem;
-            border-radius: 8px;
-            background-color: var(--bg-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .placeholder-content h2 {
-            font-size: 1.75rem;
-            margin-bottom: 1rem;
-            color: var(--text-color);
-        }
-
-        .placeholder-content p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-        }
-
-        /* 데이터가 없을 때 플레이스홀더 스타일 */
-        .placeholder-grid {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-
-        @media (min-width: 768px) {
-            .placeholder-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        .placeholder-card {
-            background-color: var(--bg-secondary);
-            border-radius: 8px;
-            overflow: hidden;
-            height: 300px;
-        }
-
-        .placeholder-image {
-            height: 200px;
-            background-color: var(--bg-dark);
-        }
-
-        .placeholder-content {
-            padding: 1rem;
-        }
-
-        .placeholder-title {
-            height: 1.5rem;
-            width: 80%;
-            background-color: var(--bg-dark);
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-        }
-
-        .placeholder-text {
-            height: 1rem;
-            width: 100%;
-            background-color: var(--bg-dark);
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-        }
-
-        .placeholder-meta {
-            height: 0.75rem;
-            width: 60%;
-            background-color: var(--bg-dark);
-            border-radius: 4px;
-        }
-
-        .ranking-placeholder {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .placeholder-item {
-            display: flex;
-            align-items: center;
-            background-color: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 4px;
-            height: 4rem;
-        }
-
-        .placeholder-number {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--text-secondary);
-            width: 2rem;
-            text-align: center;
-            margin-right: 1rem;
-        }
-
-        .placeholder-content {
-            flex: 1;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .slider-container {
             display: flex;
-            transition: transform 0.5s ease-in-out;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             height: 100%;
         }
 
@@ -388,6 +364,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .slider-item:hover .slider-image {
+            transform: scale(1.05);
         }
 
         .slider-caption {
@@ -395,28 +376,33 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
             padding: 2rem;
+            backdrop-filter: blur(5px);
         }
 
         .slider-category {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
-            background-color: var(--primary-color);
-            border-radius: 4px;
+            padding: 0.4rem 0.8rem;
+            background: var(--gradient-primary);
+            border-radius: 20px;
             font-size: 0.75rem;
             margin-bottom: 0.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
         }
 
         .slider-title {
             font-size: 1.75rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .slider-description {
             color: var(--text-secondary);
             margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }
 
         .slider-meta {
@@ -435,106 +421,201 @@
         }
 
         .slider-dot {
-            width: 0.75rem;
-            height: 0.75rem;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.4);
             cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .slider-dot:hover {
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(1.2);
         }
 
         .slider-dot.active {
-            background-color: white;
+            background: var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
         }
 
-        /* 홈 페이지 스타일 */
+        /* 프로그레스 인디케이터 추가 */
+        .slider-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--gradient-accent);
+            transition: width 5s linear;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 뉴스 그리드 개선 */
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
             margin-bottom: 3rem;
-        }
-
-        @media (min-width: 768px) {
-            .news-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
         }
 
         .news-card {
             position: relative;
             cursor: pointer;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+            backdrop-filter: blur(10px);
+        }
+
+        .news-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 102, 204, 0.1) 0%, 
+                transparent 50%, 
+                rgba(0, 212, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .news-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(0, 102, 204, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .news-card:hover::before {
+            opacity: 1;
         }
 
         .news-image {
-            aspect-ratio: 1;
+            aspect-ratio: 16/10;
             position: relative;
+            overflow: hidden;
         }
 
         .news-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .news-card:hover .news-image img {
+            transform: scale(1.1);
         }
 
         .news-card-content {
-            margin-top: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
         }
 
         .news-card-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
+            margin-bottom: 1rem;
         }
 
         .news-category {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
-            background-color: var(--bg-secondary);
-            border-radius: 4px;
+            padding: 0.3rem 0.8rem;
+            background: var(--gradient-primary);
+            border-radius: 15px;
             font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
         }
 
         .news-views-small {
             display: flex;
             align-items: center;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-        }
-
-        .news-views-small span {
-            margin-left: 0.25rem;
+            gap: 0.3rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
         }
 
         .news-card-title {
-            margin-top: 0.5rem;
             font-size: 1.25rem;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            color: var(--text-color);
         }
 
         .news-description {
-            font-size: 1.125rem;
-            font-weight: 600;
+            font-size: 0.95rem;
             color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .news-card-footer {
             display: flex;
             justify-content: space-between;
-            margin-top: 0.5rem;
-            font-size: 0.875rem;
+            align-items: center;
+            font-size: 0.85rem;
             color: var(--text-secondary);
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .card-link {
+        .detail-btn {
+            padding: 0.5rem 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-btn::before {
+            content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
-        /* 랭킹 스타일 */
+        .detail-btn:hover {
+            background: var(--gradient-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.4);
+        }
+
+        .detail-btn:hover::before {
+            left: 100%;
+        }
+
+        /* 랭킹 섹션 개선 */
         .news-ranking {
             margin-top: 3rem;
         }
@@ -548,79 +629,310 @@
         .ranking-item {
             display: flex;
             align-items: center;
-            background-color: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 4px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            padding: 1.5rem;
+            border-radius: 16px;
             cursor: pointer;
             position: relative;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+            backdrop-filter: blur(10px);
+        }
+
+        .ranking-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 102, 204, 0.1) 0%, 
+                transparent 50%, 
+                rgba(0, 212, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: 16px;
         }
 
         .ranking-item:hover {
-            background-color: #2a2a2a;
+            transform: translateX(10px);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 102, 204, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .ranking-item:hover::before {
+            opacity: 1;
         }
 
         .ranking-number {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            color: var(--text-secondary);
-            width: 2rem;
-            text-align: center;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            margin-right: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+            transition: var(--transition-smooth);
+        }
+
+        .ranking-item:hover .ranking-number {
+            background: var(--gradient-accent);
+            transform: scale(1.1);
+            box-shadow: var(--shadow-glow);
         }
 
         .ranking-content {
             flex: 1;
+            position: relative;
+            z-index: 2;
         }
 
         .ranking-title {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
         }
 
         .ranking-footer {
             display: flex;
             justify-content: space-between;
-            font-size: 0.875rem;
+            align-items: center;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-top: 0.25rem;
+            margin-top: 0.5rem;
         }
 
-        /* 푸터 스타일 */
+        /* IT 밈 섹션 완전 개선 */
+        .it-meme-section {
+            margin-top: 3rem;
+            background: linear-gradient(135deg, 
+                var(--bg-secondary) 0%, 
+                var(--bg-card) 50%, 
+                var(--bg-secondary) 100%);
+            padding: 3rem 2rem;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 40px rgba(0, 102, 204, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .it-meme-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(0, 102, 204, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .meme-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .meme-image {
+            max-width: 100%;
+            max-height: 350px;
+            width: auto;
+            height: auto;
+            margin: 1.5rem auto;
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(0, 102, 204, 0.2);
+            transition: var(--transition-smooth);
+            border: 2px solid transparent;
+        }
+
+        .meme-image:hover {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(0, 212, 255, 0.4);
+            border-color: var(--accent-color);
+        }
+
+        .meme-button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .meme-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .meme-button:hover {
+            background: var(--gradient-accent);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .meme-button:hover::before {
+            left: 100%;
+        }
+
+        .meme-button:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .meme-button i {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .meme-button:hover i {
+            transform: rotate(180deg);
+        }
+
+        /* 섹션 제목 개선 */
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            box-shadow: 0 0 15px rgba(0, 102, 204, 0.5);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 로딩 스켈레톤 애니메이션 개선 */
+        @keyframes shimmer {
+            0% {
+                background-position: -200px 0;
+            }
+            100% {
+                background-position: calc(200px + 100%) 0;
+            }
+        }
+
+        .placeholder-card, .placeholder-item {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .placeholder-image, .placeholder-title, .placeholder-text, .placeholder-meta {
+            background: linear-gradient(
+                90deg,
+                var(--bg-dark) 0px,
+                rgba(255, 255, 255, 0.1) 40px,
+                var(--bg-dark) 80px
+            );
+            background-size: 200px;
+            animation: shimmer 1.5s infinite linear;
+            border-radius: 8px;
+        }
+
+        /* 푸터 개선 */
         .site-footer {
-            background-color: var(--bg-dark);
-            padding: 2.5rem 0;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #050505 100%);
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
 
-        @media (min-width: 768px) {
-            .footer-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
         .footer-title {
-            font-size: 1.125rem;
+            font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 1rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .footer-text {
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
         .footer-list {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.8rem;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             list-style: none;
             padding-left: 0;
+        }
+
+        .footer-list li {
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .footer-list li:hover {
+            color: var(--text-color);
+            transform: translateX(5px);
         }
 
         .social-buttons {
@@ -629,15 +941,24 @@
         }
 
         .social-button {
-            width: 2rem;
-            height: 2rem;
+            width: 2.5rem;
+            height: 2.5rem;
             border-radius: 50%;
-            background-color: var(--bg-secondary);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
             cursor: pointer;
+            color: white;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .social-button:hover {
+            background: var(--gradient-accent);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: var(--shadow-glow);
         }
 
         .footer-bottom {
@@ -647,50 +968,181 @@
             color: #555555;
         }
 
-        /* IT 밈 섹션 스타일 */
-        .it-meme-section {
-            margin-top: 3rem;
-            background-color: var(--bg-secondary);
-            padding: 2rem;
-            border-radius: 8px;
-            text-align: center;
+        /* 반응형 디자인 개선 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+
+            .nav-wrapper {
+                height: 3.5rem;
+            }
+
+            .nav-brand {
+                font-size: 1.5rem;
+            }
+
+            .category-menu {
+                display: none;
+            }
+
+            .category-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .menu-left {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .nav-item {
+                margin-right: 0;
+                margin-bottom: 0;
+                font-size: 0.9rem;
+            }
+            
+            .search-box {
+                max-width: 100%;
+                margin-left: 0;
+            }
+
+            .main-slider {
+                height: 300px;
+            }
+
+            .slider-title {
+                font-size: 1.4rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                padding-left: 1.5rem;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .meme-image {
+                max-height: 300px;
+            }
+
+            .meme-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+
+            .ranking-number {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1.2rem;
+            }
+
+            .it-meme-section {
+                padding: 2rem 1rem;
+                margin-top: 2rem;
+            }
         }
 
-        .meme-image {
-            max-width: 100%;
-            height: auto;
-            margin: 1rem auto;
-            border-radius: 8px;
+        @media (max-width: 480px) {
+            .main-slider {
+                height: 250px;
+            }
+
+            .slider-caption {
+                padding: 1rem;
+            }
+
+            .slider-title {
+                font-size: 1.2rem;
+            }
+
+            .meme-image {
+                max-height: 250px;
+            }
+
+            .news-card-content {
+                padding: 1rem;
+            }
+
+            .ranking-item {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
         }
 
-        .meme-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
+        /* 추가 애니메이션과 인터랙션 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-fadeInLeft {
+            animation: fadeInLeft 0.6s ease-out;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* 마우스 커서 효과 */
+        .news-card, .ranking-item, .meme-button, .detail-btn {
             cursor: pointer;
-            font-size: 1rem;
         }
 
-        .meme-button:hover {
-            background-color: var(--primary-hover);
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
 
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
 
-        .detail-btn {
-            display: inline-block;
-            margin-left: 1rem;
-            padding: 0.3rem 1rem;
-            background-color: var(--primary-color);
-            color: #fff;
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
             border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: background 0.2s;
         }
-        .detail-btn:hover {
-            background-color: var(--primary-hover);
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gradient-accent);
         }
 
     </style>
@@ -706,7 +1158,6 @@
                     </button>
                     
                     <div class="main-nav">
-
                         <a class="nav-logo" th:href="@{/}">
                             <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
                         </a>
@@ -735,7 +1186,6 @@
         </div>
     </nav>
 
-
     <!-- 카테고리 내비게이션 -->
     <div class="category-nav">
         <div class="container">
@@ -745,8 +1195,11 @@
                     <a class="nav-item" th:href="@{/#ranking}">랭킹</a>
                     <a class="nav-item" th:href="@{/category/전체?sort=latest}">최신</a>
                     <a class="nav-item" th:href="@{/category/전체?sort=views}">인기</a>
-                    <!-- 여기서 키워드 링크를 수정했습니다 - 직접 /keywords 페이지로 이동하도록 변경 -->
                     <a class="nav-item" th:href="@{/keywords}">키워드</a>
+                    <!-- NEW: 타임라인 버튼 추가 -->
+                    <a class="nav-item timeline-btn" th:href="@{/timeline}">
+                        <i class="fas fa-clock"></i>타임라인
+                    </a>
                 </div>
                 <form action="/search" method="get" class="search-box">
                     <input type="text" name="query" placeholder="키워드로 뉴스 검색...">
@@ -768,14 +1221,14 @@
                     <div class="slider-container" id="slider-container">
                         <!-- 슬라이더 아이템 동적 반복 -->
                         <div th:each="headline, status : ${headlineNews}" class="slider-item">
-                            <img class="slider-image" th:src="${headline.image}" th:alt="${headline.title}">
+                            <img class="slider-image" th:src="${headline.urlToImage != null ? headline.urlToImage : '/images/placeholder.jpg'}" th:alt="${headline.title}">
                             <div class="slider-caption">
                                 <span class="slider-category" th:text="${headline.category}">카테고리</span>
                                 <h2 class="slider-title" th:text="${headline.title}">뉴스 제목</h2>
                                 <p class="slider-description" th:text="${headline.description}">뉴스 설명</p>
                                 <div class="slider-meta">
-                                    <span th:text="${headline.source}">출처</span>
-                                    <span th:text="${headline.date}">날짜</span>
+                                    <span th:text="${headline.sourceName}">출처</span>
+                                    <span th:text="${#temporals.format(headline.publishedAt, 'yyyy-MM-dd')}">날짜</span>
                                 </div>
                             </div>
                         </div>
@@ -785,8 +1238,12 @@
                     <div class="slider-nav">
                         <div th:each="dot, status : ${headlineNews}" 
                              th:class="${status.index == 0} ? 'slider-dot active' : 'slider-dot'" 
-                             th:onclick="'moveSlide(' + ${status.index} + ')'"></div>
+                             th:onclick="'moveSlide(' + ${status.index} + ')'">
+                        </div>
                     </div>
+                    
+                    <!-- 프로그레스 바 -->
+                    <div class="slider-progress" id="slider-progress"></div>
                 </div>
                 
                 <!-- 헤드라인 뉴스가 없을 때 대체 콘텐츠 -->
@@ -802,24 +1259,60 @@
                     <h2 class="section-title">추천 뉴스</h2>
                     <div class="news-grid">
                         <!-- 추천 뉴스 항목 -->
-                        <div class="news-card" th:each="news : ${recommendedNews}">
+                        <div class="news-card animate-fadeInUp" th:each="news : ${recommendedNews}">
                             <div class="news-image">
-                                <img th:src="${news.image != null ? news.image : '/images/placeholder.jpg'}" 
+                                <img th:src="${news.urlToImage != null ? news.urlToImage : '/images/placeholder.jpg'}" 
                                      th:alt="${news.title}">
                             </div>
                             <div class="news-card-content">
                                 <div class="news-card-header">
                                     <span class="news-category" th:text="${news.category}">카테고리</span>
                                     <div class="news-views-small">
-                                        <span>👁️</span> <span th:text="${news.views}">0</span>
+                                        <i class="fas fa-eye"></i>
+                                        <span th:text="${news.views}">0</span>
                                     </div>
                                 </div>
                                 <h3 class="news-card-title" th:text="${news.title}">뉴스 제목</h3>
                                 <p class="news-description" th:text="${news.description}">뉴스 설명</p>
+                                
+                                <!-- 깔끔한 해시태그(키워드) 표시 -->
+                                <div class="news-keywords" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <!-- 백엔드에서 실제 키워드가 있는 경우 -->
+                                    <div th:if="${news.keywords != null and not #lists.isEmpty(news.keywords)}">
+                                        <span th:each="keyword : ${news.keywords}" 
+                                              th:text="'#' + ${keyword}" 
+                                              class="news-keyword"
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
+                                    </div>
+                                    
+                                    <!-- 백엔드 키워드가 없을 때 카테고리 기반 기본 키워드 -->
+                                    <div th:if="${news.keywords == null or #lists.isEmpty(news.keywords)}">
+                                        <span class="news-keyword" 
+                                              th:text="'#' + ${news.category}" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
+                                        <span th:if="${news.category == 'AI'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#인공지능</span>
+                                        <span th:if="${news.category == '하드웨어'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#반도체</span>
+                                        <span th:if="${news.category == '데이터'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#빅데이터</span>
+                                        <span th:if="${news.category == '보안'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#사이버보안</span>
+                                        <span class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#기술</span>
+                                    </div>
+                                </div>
+                                
                                 <div class="news-card-footer">
-                                    <span th:text="${news.source}">출처</span>
-                                    <span th:text="${news.formattedDate}">날짜</span>
-                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">상세보기</a>
+                                    <div>
+                                        <span th:text="${news.sourceName}">출처</span>
+                                        <span> • </span>
+                                        <span th:text="${#temporals.format(news.publishedAt, 'yyyy-MM-dd')}">날짜</span>
+                                    </div>
+                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">
+                                        <i class="fas fa-arrow-right"></i>
+                                        상세보기
+                                    </a>
                                 </div>
                             </div>
                             <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
@@ -830,11 +1323,12 @@
                 <!-- 추천 뉴스가 없을 때 대체 콘텐츠 -->
                 <div class="recommended-news-placeholder" th:if="${recommendedNews == null or #lists.isEmpty(recommendedNews)}">
                     <h2 class="section-title">추천 뉴스</h2>
-                    <div class="placeholder-grid">
+                    <div class="news-grid">
                         <div class="placeholder-card" th:each="i : ${#numbers.sequence(1, 3)}">
                             <div class="placeholder-image"></div>
-                            <div class="placeholder-content">
+                            <div class="news-card-content">
                                 <div class="placeholder-title"></div>
+                                <div class="placeholder-text"></div>
                                 <div class="placeholder-text"></div>
                                 <div class="placeholder-meta"></div>
                             </div>
@@ -847,16 +1341,52 @@
                     <h2 class="section-title">조회수 순위</h2>
                     <div class="ranking-list">
                         <!-- 랭킹 뉴스 항목 -->
-                        <div class="ranking-item" th:each="news, stat : ${topViewedNews}">
-                            <span class="ranking-number" th:text="${stat.count}">1</span>
+                        <div class="ranking-item animate-fadeInLeft" th:each="news, stat : ${topViewedNews}">
+                            <div class="ranking-number" th:text="${stat.count}">1</div>
                             <div class="ranking-content">
                                 <h3 class="ranking-title" th:text="${news.title}">뉴스 제목</h3>
+                                
+                                <!-- 깔끔한 해시태그(키워드) 표시 -->
+                                <div class="news-keywords" style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <!-- 백엔드에서 실제 키워드가 있는 경우 -->
+                                    <div th:if="${news.keywords != null and not #lists.isEmpty(news.keywords)}">
+                                        <span th:each="keyword : ${news.keywords}" 
+                                              th:text="'#' + ${keyword}" 
+                                              class="news-keyword"
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
+                                    </div>
+                                    
+                                    <!-- 백엔드 키워드가 없을 때 카테고리 기반 기본 키워드 -->
+                                    <div th:if="${news.keywords == null or #lists.isEmpty(news.keywords)}">
+                                        <span class="news-keyword" 
+                                              th:text="'#' + ${news.category}" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
+                                        <span th:if="${news.category == 'AI'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#인공지능</span>
+                                        <span th:if="${news.category == '하드웨어'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#반도체</span>
+                                        <span th:if="${news.category == '데이터'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#빅데이터</span>
+                                        <span th:if="${news.category == '보안'}" class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#사이버보안</span>
+                                        <span class="news-keyword" 
+                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#인기</span>
+                                    </div>
+                                </div>
+                                
                                 <div class="ranking-footer">
-                                    <span th:text="${news.source}">출처</span>
-                                    <span class="news-views-small">
-                                        <span>👁️</span> <span th:text="${news.views}">0</span>
-                                    </span>
-                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">상세보기</a>
+                                    <div>
+                                        <span th:text="${news.sourceName}">출처</span>
+                                        <span> • </span>
+                                        <span class="news-views-small">
+                                            <i class="fas fa-eye"></i>
+                                            <span th:text="${news.views}">0</span>
+                                        </span>
+                                    </div>
+                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">
+                                        <i class="fas fa-arrow-right"></i>
+                                        상세보기
+                                    </a>
                                 </div>
                             </div>
                             <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
@@ -867,10 +1397,10 @@
                 <!-- 조회수 순위가 없을 때 대체 콘텐츠 -->
                 <div id="ranking" class="news-ranking" th:if="${topViewedNews == null or #lists.isEmpty(topViewedNews)}">
                     <h2 class="section-title">조회수 순위</h2>
-                    <div class="ranking-placeholder">
+                    <div class="ranking-list">
                         <div class="placeholder-item" th:each="i : ${#numbers.sequence(1, 5)}">
-                            <span class="placeholder-number" th:text="${i}">1</span>
-                            <div class="placeholder-content">
+                            <div class="ranking-number" th:text="${i}">1</div>
+                            <div class="ranking-content">
                                 <div class="placeholder-title"></div>
                                 <div class="placeholder-meta"></div>
                             </div>
@@ -879,10 +1409,15 @@
                 </div>
                 
                 <!-- IT 밈 섹션 -->
-                <div class="it-meme-section">
-                    <h2 class="section-title">오늘의 IT 밈</h2>
-                    <img id="meme-image" th:src="${currentMeme != null ? currentMeme : '/memes/meme1.png'}" alt="IT 밈" class="meme-image">
-                    <button id="meme-button" class="meme-button">다른 밈 보기</button>
+                <div class="it-meme-section animate-float">
+                    <div class="meme-container">
+                        <h2 class="section-title">오늘의 IT 밈</h2>
+                        <img id="meme-image" th:src="${currentMeme != null ? currentMeme : '/memes/meme1.png'}" alt="IT 밈" class="meme-image">
+                        <button id="meme-button" class="meme-button">
+                            <i class="fas fa-sync-alt"></i>
+                            다른 밈 보기
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -893,116 +1428,68 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-column">
-                    <h3 class="footer-title">Curaty</h3>
+                    <h3 class="footer-title">CuraT</h3>
                     <p class="footer-text">
                         최신 기술 뉴스와 트렌드를 한 곳에서 확인하세요.
+                        AI 기반 큐레이션으로 개인화된 뉴스를 제공합니다.
                     </p>
                 </div>
                 <div class="footer-column">
                     <h3 class="footer-title">고객 센터</h3>
                     <ul class="footer-list">
-                        <li>전화: 010-6404-6830</li>
-                        <li>이메일: t01064046830@dankook.ac.kr</li>
-                        <li>운영시간: 평일 9:00 - 18:00</li>
+                        <li><i class="fas fa-phone"></i> 전화: 010-6404-6830</li>
+                        <li><i class="fas fa-envelope"></i> 이메일: t01064046830@dankook.ac.kr</li>
+                        <li><i class="fas fa-clock"></i> 운영시간: 평일 9:00 - 18:00</li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3 class="footer-title">서비스 안내</h3>
                     <ul class="footer-list">
-                        <li>뉴스 구독</li>
-                        <li>개인정보 처리방침</li>
-                        <li>이용약관</li>
-                        <li>공지사항</li>
+                        <li><i class="fas fa-bell"></i> 뉴스 구독</li>
+                        <li><i class="fas fa-shield-alt"></i> 개인정보 처리방침</li>
+                        <li><i class="fas fa-file-contract"></i> 이용약관</li>
+                        <li><i class="fas fa-bullhorn"></i> 공지사항</li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3 class="footer-title">소셜 미디어</h3>
                     <div class="social-buttons">
-                        <button class="social-button">
+                        <button class="social-button" title="Mobile App">
                             <i class="fas fa-mobile-alt"></i>
                         </button>
-                        <button class="social-button">
-                            <i class="fas fa-camera"></i>
+                        <button class="social-button" title="Instagram">
+                            <i class="fab fa-instagram"></i>
                         </button>
-                        <button class="social-button">
+                        <button class="social-button" title="Twitter">
                             <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="social-button" title="YouTube">
+                            <i class="fab fa-youtube"></i>
                         </button>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2025 News Curation. All rights reserved.</p>
+                <p>© 2025 CuraT News Curation. All rights reserved. | Made with ❤️ for tech enthusiasts</p>
             </div>
         </div>
     </footer>
 
     <script th:inline="javascript">
-        // 메인 슬라이더 기능
-        let currentSlide = 0;
-        const slideCount = /*[[${headlineNews != null ? headlineNews.size() : 0}]]*/ 3; // 서버에서 가져온 슬라이드 개수 또는 기본값
-        const sliderContainer = document.getElementById('slider-container');
-        const sliderDots = document.querySelectorAll('.slider-dot');
         
-        // 슬라이더가 존재할 때만 실행
-        if(sliderContainer && sliderDots.length > 0) {
-            // 슬라이드 이동 함수
-            function moveSlide(slideIndex) {
-                currentSlide = slideIndex;
-                updateSlider();
-            }
-            
-            // 슬라이더 업데이트 함수
-            function updateSlider() {
-                // 슬라이더 이동
-                sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
-                
-                // 네비게이션 도트 업데이트
-                sliderDots.forEach((dot, index) => {
-                    if (index === currentSlide) {
-                        dot.classList.add('active');
-                    } else {
-                        dot.classList.remove('active');
-                    }
-                });
-            }
-            
-            // 슬라이더가 있을 때만 자동 슬라이드 실행
-            if(slideCount > 0) {
-                setInterval(() => {
-                    currentSlide = (currentSlide + 1) % slideCount;
-                    updateSlider();
-                }, 5000); // 5초마다 슬라이드 변경
-            }
-        }
-        
-        // IT 밈 기능
+        // IT 밈 기능 개선
         const memeButton = document.getElementById('meme-button');
         const memeImage = document.getElementById('meme-image');
         
         if(memeButton && memeImage) {
             const MEMES = [
-              '/memes/meme1.png',
-              '/memes/meme2.png',
-              '/memes/meme3.png',
-              '/memes/meme4.png',
-              '/memes/meme5.png',
-              '/memes/meme6.png',
-              '/memes/meme7.png',
-              '/memes/meme8.png',
-              '/memes/meme9.png',
-              '/memes/meme10.png',
-              '/memes/meme11.png',
-              '/memes/meme12.png',
-              '/memes/meme13.png',
-              '/memes/meme14.png',
-              '/memes/meme15.png',
-              '/memes/meme16.png',
-              '/memes/meme17.png',
-              '/memes/meme18.png',
-              '/memes/meme19.png',
-              '/memes/meme20.png'
+              '/memes/meme1.png', '/memes/meme2.png', '/memes/meme3.png', '/memes/meme4.png', '/memes/meme5.png',
+              '/memes/meme6.png', '/memes/meme7.png', '/memes/meme8.png', '/memes/meme9.png', '/memes/meme10.png',
+              '/memes/meme11.png', '/memes/meme12.png', '/memes/meme13.png', '/memes/meme14.png', '/memes/meme15.png',
+              '/memes/meme16.png', '/memes/meme17.png', '/memes/meme18.png', '/memes/meme19.png', '/memes/meme20.png'
             ];
             let recentMemes = [];
+            
             function getRandomMeme() {
                 const candidates = MEMES.filter(meme => !recentMemes.includes(meme));
                 let meme;
@@ -1013,15 +1500,147 @@
                     meme = candidates[Math.floor(Math.random() * candidates.length)];
                 }
                 recentMemes.push(meme);
-                if (recentMemes.length > 20) recentMemes.shift();
+                if (recentMemes.length > 10) recentMemes.shift();
                 return meme;
             }
-            memeButton.addEventListener('click', function() {
-                const meme = getRandomMeme();
-                memeImage.src = meme;
-                memeImage.alt = `IT meme`;
+            
+            memeButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 버튼 비활성화 및 로딩 상태
+                memeButton.disabled = true;
+                memeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 로딩중...';
+                memeButton.style.transform = 'scale(0.95)';
+                
+                // 이미지 페이드 아웃
+                memeImage.style.opacity = '0';
+                memeImage.style.transform = 'scale(0.9)';
+                
+                setTimeout(() => {
+                    const newMeme = getRandomMeme();
+                    memeImage.src = newMeme;
+                    memeImage.alt = `IT 밈 - ${Math.floor(Math.random() * 1000)}`;
+                    
+                    // 이미지 로드 완료 후 페이드 인
+                    memeImage.onload = () => {
+                        memeImage.style.opacity = '1';
+                        memeImage.style.transform = 'scale(1)';
+                        
+                        // 버튼 복원
+                        memeButton.disabled = false;
+                        memeButton.innerHTML = '<i class="fas fa-sync-alt"></i> 다른 밈 보기';
+                        memeButton.style.transform = 'scale(1)';
+                    };
+                }, 800);
+            });
+            
+            // 키보드 접근성
+            memeButton.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    memeButton.click();
+                }
             });
         }
+        
+        // 페이지 로드 시 요소들 순차적으로 나타나는 애니메이션 개선
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intersection Observer로 스크롤 애니메이션
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // 지연을 두고 순차적으로 애니메이션
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            entry.target.classList.add('animate-fadeInUp');
+                        }, index * 100);
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            // 애니메이션 대상 요소들 관찰
+            const animateElements = document.querySelectorAll('.news-card, .ranking-item');
+            animateElements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(50px)';
+                el.style.transition = `opacity 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) ${index * 0.1}s, 
+                                      transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) ${index * 0.1}s`;
+                observer.observe(el);
+            });
+            
+            // 네비게이션 항목 호버 효과
+            const navItems = document.querySelectorAll('.nav-item, .category-item');
+            navItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                });
+            });
+            
+            // 검색창 포커스 효과
+            const searchInput = document.querySelector('.search-box input');
+            if (searchInput) {
+                searchInput.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                
+                searchInput.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            }
+            
+            // 스무스 스크롤
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // 페이지 로드 완료 후 전체 컨테이너 페이드 인
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+        
+        // 성능 최적화: 스크롤 이벤트 디바운싱
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+                // 스크롤 기반 추가 효과들을 여기에 추가할 수 있음
+            }, 100);
+        });
+        
+        // 에러 핸들링
+        window.addEventListener('error', function(e) {
+            console.warn('이미지 로드 실패:', e.target.src);
+            if (e.target.tagName === 'IMG') {
+                e.target.src = '/images/placeholder.jpg';
+            }
+        });
+        
+        // 페이지 가시성 API로 자동 슬라이드 제어
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearInterval(slideInterval);
+            } else if (slideCount > 0) {
+                resetAutoSlide();
+            }
+        });
     </script>
 </body>
 </html>

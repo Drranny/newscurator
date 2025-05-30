@@ -11,6 +11,7 @@ import kr.ac.dankook.cs.curation.repository.AiArticleRepository;
 import kr.ac.dankook.cs.curation.repository.BigdataArticleRepository;
 import kr.ac.dankook.cs.curation.repository.SecurityArticleRepository;
 import kr.ac.dankook.cs.curation.repository.HardwareArticleRepository;
+import kr.ac.dankook.cs.curation.service.HardwareArticleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ public class NewsApiService {
     private final BigdataArticleRepository bdRepo;
     private final SecurityArticleRepository secRepo;
     private final HardwareArticleRepository hwRepo;
+    private final HardwareArticleService hardwareArticleService;
     private final Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
 
     @Autowired
@@ -56,7 +58,8 @@ public class NewsApiService {
                           AiArticleRepository aiRepo,
                           BigdataArticleRepository bdRepo,
                           SecurityArticleRepository secRepo,
-                          HardwareArticleRepository hwRepo) {
+                          HardwareArticleRepository hwRepo,
+                          HardwareArticleService hardwareArticleService) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.mapper = mapper;
@@ -64,6 +67,7 @@ public class NewsApiService {
         this.bdRepo = bdRepo;
         this.secRepo = secRepo;
         this.hwRepo = hwRepo;
+        this.hardwareArticleService = hardwareArticleService;
     }
 
     public List<AiArticle> fetchAiKoreanNews() {
@@ -107,114 +111,149 @@ public class NewsApiService {
         String url = String.format("%s?q=%s&from=%s&to=%s&language=ko&sortBy=publishedAt&apiKey=%s",
                 config.getApiUrl(), encodedKeyword, config.getFromDate(), config.getToDate(), config.getApiKey());
         
-        String response = restTemplate.getForObject(url, String.class);
-        JsonNode root = mapper.readTree(response);
-        JsonNode articles = root.path("articles");
-        List<T> list = new ArrayList<>();
-        String category = "";
-        
-        for (JsonNode n : articles) {
-            T entity = supplier.get();
-            if (entity instanceof AiArticle) {
-                category = "AI";
-                AiArticle a = (AiArticle) entity;
-                a.setTitle(n.path("title").asText());
-                a.setDescription(n.path("description").asText());
-                a.setUrl(n.path("url").asText());
-                a.setAuthor(n.path("author").asText(null));
-                a.setUrlToImage(n.path("urlToImage").asText(null));
-                String p = n.path("publishedAt").asText();
-                if (!p.isEmpty()) a.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
-                a.setRecommendedAt(LocalDateTime.now());
-                a.setCategory(keyword);
-                
-                // 새로운 기사에 대해 키워드 추출
-                String text = a.getTitle() + " " + (a.getDescription() != null ? a.getDescription() : "");
-                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
-                        .filter(t -> t.getPos().startsWith("NN"))
-                        .map(Token::getMorph)
-                        .collect(Collectors.toSet());
-                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
-                a.setKeywords(keywordStr);
-                
-                if (a.getUrl() != null && a.getUrl().length() <= 255 && !aiRepo.existsByUrl(a.getUrl())) list.add(entity);
-            } else if (entity instanceof BigdataArticle) {
-                category = "빅데이터";
-                BigdataArticle b = (BigdataArticle) entity;
-                b.setTitle(n.path("title").asText());
-                b.setDescription(n.path("description").asText());
-                b.setUrl(n.path("url").asText());
-                b.setAuthor(n.path("author").asText(null));
-                b.setUrlToImage(n.path("urlToImage").asText(null));
-                String p = n.path("publishedAt").asText();
-                if (!p.isEmpty()) b.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
-                b.setRecommendedAt(LocalDateTime.now());
-                b.setCategory(keyword);
-                
-                // 새로운 기사에 대해 키워드 추출
-                String text = b.getTitle() + " " + (b.getDescription() != null ? b.getDescription() : "");
-                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
-                        .filter(t -> t.getPos().startsWith("NN"))
-                        .map(Token::getMorph)
-                        .collect(Collectors.toSet());
-                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
-                b.setKeywords(keywordStr);
-                
-                if (b.getUrl() != null && b.getUrl().length() <= 255 && !bdRepo.existsByUrl(b.getUrl())) list.add(entity);
-            } else if (entity instanceof SecurityArticle) {
-                category = "보안";
-                SecurityArticle s = (SecurityArticle) entity;
-                s.setTitle(n.path("title").asText());
-                s.setDescription(n.path("description").asText());
-                s.setUrl(n.path("url").asText());
-                s.setUrlOriginal(n.path("url").asText());
-                s.setAuthor(n.path("author").asText(null));
-                s.setUrlToImage(n.path("urlToImage").asText(null));
-                String p = n.path("publishedAt").asText();
-                if (!p.isEmpty()) s.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
-                s.setRecommendedAt(LocalDateTime.now());
-                s.setCategory(keyword);
-                
-                // 새로운 기사에 대해 키워드 추출
-                String text = s.getTitle() + " " + (s.getDescription() != null ? s.getDescription() : "");
-                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
-                        .filter(t -> t.getPos().startsWith("NN"))
-                        .map(Token::getMorph)
-                        .collect(Collectors.toSet());
-                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
-                s.setKeywords(keywordStr);
-                
-                if (s.getUrl() != null && s.getUrl().length() <= 255 && !secRepo.existsByUrl(s.getUrl())) list.add(entity);
-            } else if (entity instanceof HardwareArticle) {
-                category = "하드웨어";
-                HardwareArticle h = (HardwareArticle) entity;
-                h.setTitle(n.path("title").asText());
-                h.setDescription(n.path("description").asText());
-                h.setUrl(n.path("url").asText());
-                h.setAuthor(n.path("author").asText(null));
-                h.setUrlToImage(n.path("urlToImage").asText(null));
-                String p = n.path("publishedAt").asText();
-                if (!p.isEmpty()) h.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
-                h.setRecommendedAt(LocalDateTime.now());
-                h.setCategory(keyword);
-                
-                // 새로운 기사에 대해 키워드 추출
-                String text = h.getTitle() + " " + (h.getDescription() != null ? h.getDescription() : "");
-                Set<String> keywords = komoran.analyze(text).getTokenList().stream()
-                        .filter(t -> t.getPos().startsWith("NN"))
-                        .map(Token::getMorph)
-                        .collect(Collectors.toSet());
-                String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
-                h.setKeywords(keywordStr);
-                
-                if (h.getUrl() != null && h.getUrl().length() <= 255 && !hwRepo.existsByUrl(h.getUrl())) list.add(entity);
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            if (response == null) {
+                log.error("뉴스 API 응답이 null입니다. URL: {}", url);
+                return new ArrayList<>();
             }
-        }
-        
-        log.info("{} 카테고리 수집 결과: API 응답 기사 수={}, 중복 제외 후 저장된 기사 수={}", 
-            category, articles.size(), list.size());
+
+            JsonNode root = mapper.readTree(response);
+            JsonNode articles = root.path("articles");
+            if (articles == null || !articles.isArray()) {
+                log.error("뉴스 API 응답에 articles 배열이 없습니다. 응답: {}", response);
+                return new ArrayList<>();
+            }
+
+            List<T> list = new ArrayList<>();
+            String category = "";
             
-        return repo.saveAll(list);
+            for (JsonNode n : articles) {
+                try {
+                    T entity = supplier.get();
+                    if (entity instanceof AiArticle) {
+                        category = "AI";
+                        AiArticle a = (AiArticle) entity;
+                        a.setTitle(n.path("title").asText());
+                        a.setDescription(n.path("description").asText());
+                        a.setUrl(n.path("url").asText());
+                        a.setAuthor(n.path("author").asText(null));
+                        a.setUrlToImage(n.path("urlToImage").asText(null));
+                        String p = n.path("publishedAt").asText();
+                        if (!p.isEmpty()) a.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
+                        a.setRecommendedAt(LocalDateTime.now());
+                        a.setCategory(keyword);
+                        
+                        // 새로운 기사에 대해 키워드 추출
+                        String text = a.getTitle() + " " + (a.getDescription() != null ? a.getDescription() : "");
+                        Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                                .filter(t -> t.getPos().startsWith("NN"))
+                                .map(Token::getMorph)
+                                .collect(Collectors.toSet());
+                        String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                        a.setKeywords(keywordStr);
+                        
+                        if (a.getUrl() != null && a.getUrl().length() <= 255 && !aiRepo.existsByUrl(a.getUrl())) {
+                            list.add(entity);
+                        }
+                    } else if (entity instanceof BigdataArticle) {
+                        category = "빅데이터";
+                        BigdataArticle b = (BigdataArticle) entity;
+                        b.setTitle(n.path("title").asText());
+                        b.setDescription(n.path("description").asText());
+                        b.setUrl(n.path("url").asText());
+                        b.setAuthor(n.path("author").asText(null));
+                        b.setUrlToImage(n.path("urlToImage").asText(null));
+                        String p = n.path("publishedAt").asText();
+                        if (!p.isEmpty()) b.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
+                        b.setRecommendedAt(LocalDateTime.now());
+                        b.setCategory(keyword);
+                        
+                        // 새로운 기사에 대해 키워드 추출
+                        String text = b.getTitle() + " " + (b.getDescription() != null ? b.getDescription() : "");
+                        Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                                .filter(t -> t.getPos().startsWith("NN"))
+                                .map(Token::getMorph)
+                                .collect(Collectors.toSet());
+                        String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                        b.setKeywords(keywordStr);
+                        
+                        if (b.getUrl() != null && b.getUrl().length() <= 255 && !bdRepo.existsByUrl(b.getUrl())) {
+                            list.add(entity);
+                        }
+                    } else if (entity instanceof SecurityArticle) {
+                        category = "보안";
+                        SecurityArticle s = (SecurityArticle) entity;
+                        s.setTitle(n.path("title").asText());
+                        s.setDescription(n.path("description").asText());
+                        s.setUrl(n.path("url").asText());
+                        s.setUrlOriginal(n.path("url").asText());
+                        s.setAuthor(n.path("author").asText(null));
+                        s.setUrlToImage(n.path("urlToImage").asText(null));
+                        String p = n.path("publishedAt").asText();
+                        if (!p.isEmpty()) s.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
+                        s.setRecommendedAt(LocalDateTime.now());
+                        s.setCategory(keyword);
+                        
+                        // 새로운 기사에 대해 키워드 추출
+                        String text = s.getTitle() + " " + (s.getDescription() != null ? s.getDescription() : "");
+                        Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                                .filter(t -> t.getPos().startsWith("NN"))
+                                .map(Token::getMorph)
+                                .collect(Collectors.toSet());
+                        String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                        s.setKeywords(keywordStr);
+                        
+                        if (s.getUrl() != null && s.getUrl().length() <= 255 && !secRepo.existsByUrl(s.getUrl())) {
+                            list.add(entity);
+                        }
+                    } else if (entity instanceof HardwareArticle) {
+                        category = "하드웨어";
+                        HardwareArticle h = (HardwareArticle) entity;
+                        h.setTitle(n.path("title").asText());
+                        h.setDescription(n.path("description").asText());
+                        h.setUrl(n.path("url").asText());
+                        h.setAuthor(n.path("author").asText(null));
+                        h.setUrlToImage(n.path("urlToImage").asText(null));
+                        String p = n.path("publishedAt").asText();
+                        if (!p.isEmpty()) h.setPublishedAt(ZonedDateTime.parse(p).toLocalDateTime());
+                        h.setRecommendedAt(LocalDateTime.now());
+                        h.setCategory(keyword);
+                        
+                        // 새로운 기사에 대해 키워드 추출
+                        String text = h.getTitle() + " " + (h.getDescription() != null ? h.getDescription() : "");
+                        Set<String> keywords = komoran.analyze(text).getTokenList().stream()
+                                .filter(t -> t.getPos().startsWith("NN"))
+                                .map(Token::getMorph)
+                                .collect(Collectors.toSet());
+                        String keywordStr = keywords.stream().limit(5).collect(Collectors.joining(","));
+                        h.setKeywords(keywordStr);
+                        
+                        // URL 중복 체크 및 저장
+                        if (h.getUrl() != null && h.getUrl().length() <= 255) {
+                            try {
+                                HardwareArticle saved = hardwareArticleService.saveIfNotExists(h);
+                                if (saved != null) {
+                                    list.add((T) saved);
+                                }
+                            } catch (Exception e) {
+                                log.error("하드웨어 기사 저장 중 오류 발생: URL={}, 에러={}", h.getUrl(), e.getMessage(), e);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("기사 처리 중 오류 발생: {}", e.getMessage(), e);
+                }
+            }
+            
+            log.info("{} 카테고리 수집 결과: API 응답 기사 수={}, 중복 제외 후 저장된 기사 수={}", 
+                category, articles.size(), list.size());
+                
+            return repo.saveAll(list);
+        } catch (Exception e) {
+            log.error("뉴스 API 호출 중 오류 발생: URL={}, 에러={}", url, e.getMessage(), e);
+            throw new IOException("Failed to fetch news from API", e);
+        }
     }
 
     @Scheduled(cron = "0 0 9 * * ?")  // 매일 오전 9시에 실행

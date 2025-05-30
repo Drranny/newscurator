@@ -8,8 +8,8 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         :root {
-            --primary-color: #0066cc;
-            --primary-hover: #0056b3;
+            --primary-color: #0ABAB5;
+            --primary-hover: #099c98;
             --text-color: #f7f7f7;
             --text-secondary: #a0a0a0;
             --bg-color: #000000;
@@ -17,6 +17,10 @@
             --bg-card: #222222;
             --bg-dark: #111111;
             --border-color: #333333;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
         }
 
         body {
@@ -425,7 +429,7 @@
                         <a class="nav-logo" th:href="@{/}">
                             <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
                         </a>
-                        <a class="nav-brand" th:href="@{/}">News Curation</a>
+                        <a class="nav-brand" th:href="@{/}">CuraT</a>
                         <div class="category-menu">
                             <a class="category-item" th:classappend="${article.category == 'AI'} ? 'active' : ''" th:href="@{/category/AI}">AI</a>
                             <a class="category-item" th:classappend="${article.category == '하드웨어'} ? 'active' : ''" th:href="@{/category/하드웨어}">하드웨어</a>
