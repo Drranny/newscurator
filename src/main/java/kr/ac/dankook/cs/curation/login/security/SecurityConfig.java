@@ -53,6 +53,7 @@ public class SecurityConfig {
                     "/auth/**",         // 로그인·회원가입·검증 모두 허용
                     "/oauth2/**",        // OAuth2 엔드포인트
                     "/api/fetch/**",
+		    "/timeline",
 
                     "/js/**",
                     "/logo/**",
