@@ -8,6 +8,10 @@ import kr.ac.dankook.cs.curation.repository.AiArticleRepository;
 import kr.ac.dankook.cs.curation.repository.BigdataArticleRepository;
 import kr.ac.dankook.cs.curation.repository.SecurityArticleRepository;
 import kr.ac.dankook.cs.curation.repository.HardwareArticleRepository;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +74,11 @@ public class CurationController {
 
         model.addAttribute("recommendedNews", recommendedNews);
         model.addAttribute("topViewedNews", topViewedNews);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        
         return "index";
     }
 
@@ -117,7 +126,11 @@ public class CurationController {
     @GetMapping("/articles/ai/{id}")
     public String detailAi(@PathVariable Long id, Model model) {
         return aiRepo.findById(id)
-                .map(a -> { model.addAttribute("article", a); return "detail"; })
+                .map(a -> { model.addAttribute("article", a);
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+                    model.addAttribute("isLoggedIn", isLoggedIn); 
+                    return "detail"; })
                 .orElse("not-found");
     }
 
@@ -125,7 +138,11 @@ public class CurationController {
     @GetMapping("/articles/bigdata/{id}")
     public String detailBigdata(@PathVariable Long id, Model model) {
         return bdRepo.findById(id)
-                .map(a -> { model.addAttribute("article", a); return "detail"; })
+                 .map(a -> { model.addAttribute("article", a);
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+                    model.addAttribute("isLoggedIn", isLoggedIn); 
+                    return "detail"; })
                 .orElse("not-found");
     }
 
@@ -133,7 +150,11 @@ public class CurationController {
     @GetMapping("/articles/security/{id}")
     public String detailSecurity(@PathVariable Long id, Model model) {
         return secRepo.findById(id)
-                .map(a -> { model.addAttribute("article", a); return "detail"; })
+                 .map(a -> { model.addAttribute("article", a);
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+                    model.addAttribute("isLoggedIn", isLoggedIn); 
+                    return "detail"; })
                 .orElse("not-found");
     }
 
@@ -141,7 +162,11 @@ public class CurationController {
     @GetMapping("/articles/hardware/{id}")
     public String detailHardware(@PathVariable Long id, Model model) {
         return hwRepo.findById(id)
-                .map(a -> { model.addAttribute("article", a); return "detail"; })
+                 .map(a -> { model.addAttribute("article", a);
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+                    model.addAttribute("isLoggedIn", isLoggedIn); 
+                    return "detail"; })
                 .orElse("not-found");
     }
 
@@ -195,6 +220,20 @@ public class CurationController {
         model.addAttribute("activeSort", sort);
         model.addAttribute("currentSort", currentSort);
         model.addAttribute("currentDirection", currentDirection);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+        model.addAttribute("isLoggedIn", isLoggedIn);
+
         return "category";
     }
+
+    @GetMapping("/analytics")
+    public String analytics(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        
+        return "analytics";
+}
 }
