@@ -46,6 +46,9 @@ public class User implements UserDetails {
 
     private LocalDateTime emailVerifyCodeExpiry;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserArticle> readArticles;
+    
     @Builder
     public User(String loginId, String email, String name, String password) {
         this.loginId = loginId;
