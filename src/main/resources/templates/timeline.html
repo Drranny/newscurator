@@ -598,7 +598,12 @@
                     <span class="divider">|</span>
                     <a class="nav-button" th:href="@{/}">홈</a>
                     <span class="divider">|</span>
-                    <a class="nav-button" th:href="@{/login}">로그인</a>
+                    <a class="nav-button" th:if="${isLoggedIn}" th:href="@{/auth/logout}">
+                        로그아웃
+                    </a>
+                    <a class="nav-button" th:if="${!isLoggedIn}" th:href="@{/auth/login}">
+                        로그인
+                    </a>
                     <span class="divider">|</span>
                     <a class="nav-button" th:href="@{/user}">마이페이지</a>
                 </div>
@@ -963,3 +968,5 @@
             });
         }
     </script>
+    <script th:src="@{/js/quitLogout.js}"></script>
+</body>
