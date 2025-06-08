@@ -84,6 +84,10 @@ public class TImelineController {
             model.addAttribute("endDate", endDate);
             model.addAttribute("selectedKeyword", keyword);
             model.addAttribute("selectedCategory", category);
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+            model.addAttribute("isLoggedIn", isLoggedIn);
             
             return "timeline";
             
@@ -96,6 +100,10 @@ public class TImelineController {
             model.addAttribute("timeRange", "7일");
             model.addAttribute("startDate", LocalDate.now().minusDays(7).toString());
             model.addAttribute("endDate", LocalDate.now().toString());
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean isLoggedIn = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+            model.addAttribute("isLoggedIn", isLoggedIn);
             
             return "timeline";
         }
