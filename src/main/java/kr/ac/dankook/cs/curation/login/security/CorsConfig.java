@@ -32,6 +32,10 @@ public class CorsConfig implements WebMvcConfigurer {
         registry
           .addResourceHandler("/memes/**")
           .addResourceLocations("classpath:/static/memes/");
+
+        registry
+          .addResourceHandler("/css/**")
+          .addResourceLocations("classpath:/static/css/");
         
         registry
           .addResourceHandler("/favicon.ico") 
