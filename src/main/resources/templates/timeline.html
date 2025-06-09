@@ -695,7 +695,7 @@
                         <div class="timeline-content js-record-click"
                         th:onclick="'window.open(\'' + ${article.sourceUrl} + '\', '_blank')'" 
                         th:data-title="|[[${article.title}]]|"
-                        th:data-category="|[[${category}]]|"
+                        th:data-category="|[[${article.category}]]|"
                         th:data-keywords="|[[${article.keywords != null ? article.keywords : ''}]]|"
                         target="_blank">
                             <div class="timeline-header">
