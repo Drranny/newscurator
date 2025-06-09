@@ -1243,7 +1243,12 @@
                                      alt="News Image">
                                 <div class="slide-content">
                                     <h3 class="slide-title">
-                                        <a th:href="${article.url}" th:text="${article.title}">추천 뉴스 제목</a>
+                                        <a th:href="${article.url}" th:text="${article.title}"  
+                                        class="js-record-click"
+                                        th:data-title="|[[${article.title}]]|"
+                                        th:data-category="|[[${category}]]|"
+                                        th:data-keywords="|[[${article.keywords != null ? article.keywords : ''}]]|"
+                                        target="_blank">추천 뉴스 제목</a>
                                     </h3>
                                     <div class="slide-meta">
                                         <span th:text="${article.sourceName}">출처</span>
@@ -1340,7 +1345,10 @@
                         <div th:each="article, stat : ${articles}" 
                              th:class="${stat.index >= 0 and stat.index < 8} ? 'news-item' : 'news-item hidden'"
                              th:if="${stat.index < 20}">
-                            <a th:href="${article.url}" target="_blank" class="news-link">
+                            <a th:href="${article.url}" target="_blank" class="news-link js-record-click"
+                            th:data-title="|[[${article.title}]]|"
+                            th:data-category="|[[${category}]]|"
+                            th:data-keywords="|[[${article.keywords != null ? article.keywords : ''}]]|">
                                 <img th:src="${article.urlToImage != null ? article.urlToImage : 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop'}" 
                                      src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop" 
                                      class="news-image" 
@@ -1440,7 +1448,10 @@
                         <div th:each="article, stat : ${articles}" 
                              th:class="'news-item'"
                              th:if="${stat.index >= 8 and stat.index < 12}">
-                            <a th:href="${article.url}" target="_blank" class="news-link">
+                            <a th:href="${article.url}" target="_blank" class="news-link js-record-click"
+                            th:data-title="|[[${article.title}]]|"
+                            th:data-category="|[[${category}]]|"
+                            th:data-keywords="|[[${article.keywords != null ? article.keywords : ''}]]|">
                                 <img th:src="${article.urlToImage != null ? article.urlToImage : 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop'}" 
                                      src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop" 
                                      class="news-image" 
@@ -1760,6 +1771,34 @@
             }, 100);
         });
     </script>
+    <script th:inline="javascript">
+        const RECORD_URL = '/user-articles/record';
+        
+        function recordClick(title, category, keywords) {
+            fetch(RECORD_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    articleCategory: category,
+                    keywords: keywords
+                })
+            }).catch(console.error);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.js-record-click').forEach(el => {
+                el.addEventListener('click', () => {
+                    const title    = el.dataset.title;
+                    const category = el.dataset.category;
+                    const keywords = el.dataset.keywords;
+                    recordClick(title, category, keywords);
+                });
+            });
+        });
+        </script>
     <script th:src="@{/js/quitLogout.js}"></script>
 </body>
 </html>
