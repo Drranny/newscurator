@@ -1273,19 +1273,10 @@
                                 
                                 <!-- 깔끔한 해시태그(키워드) 표시 -->
                                 <div class="news-keywords" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                    <span class="news-keyword" 
-                                          th:text="'#' + ${news.category}" 
+                                    <span th:each="keyword : ${news.keywords}" 
+                                          th:text="'#' + ${keyword}" 
+                                          class="news-keyword"
                                           style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
-                                    <span th:if="${news.category == 'AI'}" class="news-keyword" 
-                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#인공지능</span>
-                                    <span th:if="${news.category == '하드웨어'}" class="news-keyword" 
-                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#반도체</span>
-                                    <span th:if="${news.category == '데이터'}" class="news-keyword" 
-                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#빅데이터</span>
-                                    <span th:if="${news.category == '보안'}" class="news-keyword" 
-                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#사이버보안</span>
-                                    <span class="news-keyword" 
-                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#기술</span>
                                 </div>
                                 
                                 <div class="news-card-footer">
@@ -1294,13 +1285,13 @@
                                         <span> • </span>
                                         <span th:text="${#temporals.format(news.publishedAt, 'yyyy-MM-dd')}">날짜</span>
                                     </div>
-                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">
+                                    <a th:href="${news.url}" target="_blank" class="detail-btn">
                                         <i class="fas fa-arrow-right"></i>
                                         상세보기
                                     </a>
                                 </div>
                             </div>
-                            <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
+                            <a th:href="${news.url}" target="_blank" class="card-link"></a>
                         </div>
                     </div>
                 </div>
@@ -1333,30 +1324,10 @@
                                 
                                 <!-- 깔끔한 해시태그(키워드) 표시 -->
                                 <div class="news-keywords" style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                    <!-- 백엔드에서 실제 키워드가 있는 경우 -->
-                                    <div th:if="${news.keywords != null and not #lists.isEmpty(news.keywords)}">
-                                        <span th:each="keyword : ${news.keywords}" 
-                                              th:text="'#' + ${keyword}" 
-                                              class="news-keyword"
-                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
-                                    </div>
-                                    
-                                    <!-- 백엔드 키워드가 없을 때 카테고리 기반 기본 키워드 -->
-                                    <div th:if="${news.keywords == null or #lists.isEmpty(news.keywords)}">
-                                        <span class="news-keyword" 
-                                              th:text="'#' + ${news.category}" 
-                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
-                                        <span th:if="${news.category == 'AI'}" class="news-keyword" 
-                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#인공지능</span>
-                                        <span th:if="${news.category == '하드웨어'}" class="news-keyword" 
-                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#반도체</span>
-                                        <span th:if="${news.category == '데이터'}" class="news-keyword" 
-                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#빅데이터</span>
-                                        <span th:if="${news.category == '보안'}" class="news-keyword" 
-                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#사이버보안</span>
-                                        <span class="news-keyword" 
-                                              style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);">#인기</span>
-                                    </div>
+                                    <span th:each="keyword : ${news.keywords}" 
+                                          th:text="'#' + ${keyword}" 
+                                          class="news-keyword"
+                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
                                 </div>
                                 
                                 <div class="ranking-footer">
@@ -1368,13 +1339,13 @@
                                             <span th:text="${news.views}">0</span>
                                         </span>
                                     </div>
-                                    <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="detail-btn">
+                                    <a th:href="${news.url}" target="_blank" class="detail-btn">
                                         <i class="fas fa-arrow-right"></i>
                                         상세보기
                                     </a>
                                 </div>
                             </div>
-                            <a th:href="@{'/news/' + ${news.category} + '/' + ${news.id}}" class="card-link"></a>
+                            <a th:href="${news.url}" target="_blank" class="card-link"></a>
                         </div>
                     </div>
                 </div>
