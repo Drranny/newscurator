@@ -1285,13 +1285,19 @@
                                         <span> • </span>
                                         <span th:text="${#temporals.format(news.publishedAt, 'yyyy-MM-dd')}">날짜</span>
                                     </div>
-                                    <a th:href="${news.url}" target="_blank" class="detail-btn">
+                                    <a th:href="${news.url}" target="_blank" class="detail-btn js-record-click"
+                                    th:data-title="|[[${news.title}]]|"
+                                    th:data-category="|[[${news.category}]]|"
+                                    th:data-keywords="|[[${news.keywords != null ? news.keywords : ''}]]|">
                                         <i class="fas fa-arrow-right"></i>
                                         상세보기
                                     </a>
                                 </div>
                             </div>
-                            <a th:href="${news.url}" target="_blank" class="card-link"></a>
+                            <a th:href="${news.url}" target="_blank" class="card-link js-record-click"
+                            th:data-title="|[[${news.title}]]|"
+                            th:data-category="|[[${news.category}]]|"
+                            th:data-keywords="|[[${news.keywords != null ? news.keywords : ''}]]|"></a>
                         </div>
                     </div>
                 </div>
@@ -1339,13 +1345,19 @@
                                             <span th:text="${news.views}">0</span>
                                         </span>
                                     </div>
-                                    <a th:href="${news.url}" target="_blank" class="detail-btn">
+                                    <a th:href="${news.url}" target="_blank" class="detail-btn js-record-click"
+                                    th:data-title="|[[${news.title}]]|"
+                                    th:data-category="|[[${news.category}]]|"
+                                    th:data-keywords="|[[${news.keywords != null ? news.keywords : ''}]]|">
                                         <i class="fas fa-arrow-right"></i>
                                         상세보기
                                     </a>
                                 </div>
                             </div>
-                            <a th:href="${news.url}" target="_blank" class="card-link"></a>
+                            <a th:href="${news.url}" target="_blank" class="card-link js-record-click"
+                            th:data-title="|[[${news.title}]]|"
+                            th:data-category="|[[${news.category}]]|"
+                            th:data-keywords="|[[${news.keywords != null ? news.keywords : ''}]]|"></a>
                         </div>
                     </div>
                 </div>
@@ -1598,6 +1610,34 @@
             }
         });
     </script>
+    <script th:inline="javascript">
+        const RECORD_URL = '/user-articles/record';
+        
+        function recordClick(title, category, keywords) {
+            fetch(RECORD_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    articleCategory: category,
+                    keywords: keywords
+                })
+            }).catch(console.error);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.js-record-click').forEach(el => {
+                el.addEventListener('click', () => {
+                    const title    = el.dataset.title;
+                    const category = el.dataset.category;
+                    const keywords = el.dataset.keywords;
+                    recordClick(title, category, keywords);
+                });
+            });
+        });
+        </script>
     <script th:src="@{/js/quitLogout.js}"></script>
 </body>
 </html>
