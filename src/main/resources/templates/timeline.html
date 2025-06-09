@@ -692,7 +692,12 @@
                         
                         <div class="timeline-date" th:text="${#temporals.format(article.publishedAt, 'MM월 dd일')}">05월 23일</div>
                         
-                        <div class="timeline-content" th:onclick="'window.open(\'' + ${article.sourceUrl} + '\', '_blank')'">
+                        <div class="timeline-content js-record-click"
+                        th:onclick="'window.open(\'' + ${article.sourceUrl} + '\', '_blank')'" 
+                        th:data-title="|[[${article.title}]]|"
+                        th:data-category="|[[${category}]]|"
+                        th:data-keywords="|[[${article.keywords != null ? article.keywords : ''}]]|"
+                        target="_blank">
                             <div class="timeline-header">
                                 <div class="timeline-keywords">
                                     <!-- 백엔드에서 실제 키워드가 있는 경우 표시 -->
@@ -964,5 +969,33 @@
             });
         }
     </script>
+    <script th:inline="javascript">
+        const RECORD_URL = '/user-articles/record';
+        
+        function recordClick(title, category, keywords) {
+            fetch(RECORD_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    articleCategory: category,
+                    keywords: keywords
+                })
+            }).catch(console.error);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.js-record-click').forEach(el => {
+                el.addEventListener('click', () => {
+                    const title    = el.dataset.title;
+                    const category = el.dataset.category;
+                    const keywords = el.dataset.keywords;
+                    recordClick(title, category, keywords);
+                });
+            });
+        });
+        </script>
     <script th:src="@{/js/quitLogout.js}"></script>
 </body>
