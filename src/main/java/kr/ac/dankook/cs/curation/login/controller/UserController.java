@@ -46,6 +46,41 @@ public class UserController {
     private final JwtTokenProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        // 1) 현재 인증 정보 가져오기
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getName() != null) {
+            // 2) DB에서 해당 사용자의 refreshToken 초기화
+            Optional<User> optUser = userRepository.findByLoginId(auth.getName());
+            if (optUser.isPresent()) {
+                User user = optUser.get();
+                user.setRefreshToken(null);
+                user.setRefreshTokenExpiry(null);
+                userRepository.save(user);
+            }
+            // 3) 시큐리티 컨텍스트 무효화
+            SecurityContextHolder.clearContext();
+        }
+
+        // 4) accessToken, refreshToken 쿠키 삭제
+        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)       // 즉시 만료
+                .build();
+        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccess.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteRefresh.toString());
+
+        // 5) 홈(index) 페이지로 리다이렉트
+        return "redirect:/";
+    }
+
     @PostMapping("/signup")
     public String signup( 
         @Valid @ModelAttribute SignupRequest req,
