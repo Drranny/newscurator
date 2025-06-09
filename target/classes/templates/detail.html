@@ -421,10 +421,6 @@
         <div class="container">
             <div class="nav-wrapper">
                 <div class="nav-left">
-                    <button class="menu-button">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    
                     <div class="main-nav">
                         <a class="nav-logo" th:href="@{/}">
                             <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
@@ -446,7 +442,12 @@
                     <span class="divider">|</span>
                     <a class="nav-button" th:href="@{/search}">검색</a>
                     <span class="divider">|</span>
-                    <a class="nav-button" th:href="@{/login}">로그인</a>
+                    <a class="nav-button" th:if="${isLoggedIn}" th:href="@{/auth/logout}">
+                        로그아웃
+                    </a>
+                    <a class="nav-button" th:if="${!isLoggedIn}" th:href="@{/auth/login}">
+                        로그인
+                    </a>
                     <span class="divider">|</span>
                     <a class="nav-button" th:href="@{/user}">마이</a>
                     <span class="divider">|</span>
@@ -606,5 +607,6 @@
     </footer>
 
     <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/quitLogout.js}"></script>
 </body>
 </html>

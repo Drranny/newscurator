@@ -1,5 +1,9 @@
 package kr.ac.dankook.cs.curation.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+
 import kr.ac.dankook.cs.curation.entity.Article;
 import kr.ac.dankook.cs.curation.entity.AiArticle;
 import kr.ac.dankook.cs.curation.entity.BigdataArticle;
