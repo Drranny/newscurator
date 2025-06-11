@@ -46,14 +46,14 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults()) // cors 설정을 WebMvcConfigurer로 위임
             .csrf(AbstractHttpConfigurer::disable) // crsf disable for REST
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            //.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
+            // 인증 없이 접근 가능한 경로
                 .requestMatchers(
                     "/",
-                    "/auth/**",         // 로그인·회원가입·검증 모두 허용
-                    "/oauth2/**",        // OAuth2 엔드포인트
+                    "/auth/**",         
+                    "/oauth2/**",        
                     "/api/fetch/**",
-		    "/timeline",
+		            "/timeline",
 
                     "/js/**",
                     "/logo/**",
@@ -63,13 +63,13 @@ public class SecurityConfig {
 
             )
             .oauth2Login(oauth2 -> oauth2
-                .loginPage("/auth/login")         // (1) 로그인 화면 URL
-              .failureUrl("/auth/login?error")  // (2) OAuth2 실패 시 '?error' 붙여 리다이렉트
-                .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
-                .successHandler(oAuth2SuccessHandler)
+                .loginPage("/auth/login") // OAuth2 로그인 진입 시 사용할 로그인 페이지 경로 지정
+              .failureUrl("/auth/login?error")  // OAuth2 실패 시 '?error' 붙여 리다이렉트
+                .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService)) // OAuth2 로그인 성공 후 사용자 정보 조회 서비스 설정 (jwt 발급)
+                .successHandler(oAuth2SuccessHandler) // 사용자 정보 조회 및 JWT 발급 후 성공 처리 핸들러
             )
-            .userDetailsService(userdetailService) // 명시적으로 설정
-            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+            .userDetailsService(userdetailService) 
+            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);  // 요청마다 JWT(accessToken, refreshToken) 확인 → 인증 정보 설정
         return http.build();
     }
 }
