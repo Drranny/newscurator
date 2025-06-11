@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Map;
 
+// OAuth2 로그인 성공 시 동작하는 핸들러
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -27,21 +28,18 @@ public void onAuthenticationSuccess(
     HttpServletResponse res,
     Authentication      auth
 ) throws IOException {
+     // 인증된 사용자 정보(OAuth2User)에서 이메일과 토큰 정보 추출
     DefaultOAuth2User oauthUser = (DefaultOAuth2User) auth.getPrincipal();
     String email = oauthUser.getAttribute("email");
+    String accessToken  = (String) oauthUser.getAttributes().get("accessToken");
+    String refreshToken = (String) oauthUser.getAttributes().get("refreshToken");
 
-
-        String accessToken  = (String) oauthUser.getAttributes().get("accessToken");
-        String refreshToken = (String) oauthUser.getAttributes().get("refreshToken");
-
-       ResponseCookie ac = ResponseCookie.from("accessToken", accessToken)
-        .httpOnly(true).path("/").maxAge(jwtProvider.getAccessExpMs()/1000).build();
-    ResponseCookie rc = ResponseCookie.from("refreshToken", refreshToken)
-        .httpOnly(true).path("/").maxAge(jwtProvider.getRefreshExpMs()/1000).build();
+    // JWT 토큰을 HttpOnly 쿠키로 설정하여 클라이언트에 전달
+    ResponseCookie ac = ResponseCookie.from("accessToken", accessToken).httpOnly(true).path("/").maxAge(jwtProvider.getAccessExpMs()/1000).build();
+    ResponseCookie rc = ResponseCookie.from("refreshToken", refreshToken).httpOnly(true).path("/").maxAge(jwtProvider.getRefreshExpMs()/1000).build();
     res.addHeader(HttpHeaders.SET_COOKIE, ac.toString());
     res.addHeader(HttpHeaders.SET_COOKIE, rc.toString());
 
-    // 3) 홈으로 리다이렉트
     res.sendRedirect("/");
 }
 }
