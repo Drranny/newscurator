@@ -13,15 +13,16 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/**") // 모든 엔드포인트에 대해
-            .allowedOriginPatterns("http://localhost:8080") // http://localhost:8080 도메인 허용
+        registry.addMapping("/**") // 모든 엔드포인트에 대해 CORS 허용
+            .allowedOriginPatterns("http://localhost:8080") // 프론트엔드 도메인 허용
             .allowedMethods("*") // 모든 HTTP 메소드 허용
             .allowedHeaders("*") // 모든 헤더 허용
-            .allowCredentials(true)  // 자격 증명 허용 쿠기전달 비허용
-            .maxAge(3600);
+            .allowCredentials(true)  // 인증 정보(쿠키 등) 포함 허용
+            .maxAge(3600); // 예비 요청(preflight)의 결과를 3600초(1시간) 동안 캐시
     }
 
-      @Override
+    // 정적 리소스 경로 설정
+    @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
           .addResourceHandler("/js/**")
