@@ -24,7 +24,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtProvider;
     private final UserDetailService userDetailService;
 
-    // 쿠키에서 지정한 이름의 값을 꺼내는 헬퍼
+    // 특정 쿠키 추출 메서드
     private String getCookie(HttpServletRequest req, String name) {
         if (req.getCookies() == null) return null;
         for (Cookie c : req.getCookies()) {
@@ -41,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     FilterChain chain)
                                     throws ServletException, IOException {
         try {
-            // 1) accessToken 쿠키 확인
+            // accessToken 쿠키 확인
             String accessToken = getCookie(req, "accessToken");
             if (accessToken != null && jwtProvider.validateToken(accessToken)) {
                 // 정상 토큰 → 바로 인증 컨텍스트 세팅
@@ -52,7 +52,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } else {
-                // 2) accessToken 만료 또는 없음 → refreshToken 쿠키 확인
+                // accessToken 만료 또는 없음 → refreshToken 쿠키 확인
                 String refreshToken = getCookie(req, "refreshToken");
                 if (refreshToken != null && jwtProvider.validateToken(refreshToken)) {
                     // 재발급
@@ -73,7 +73,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                             ud, null, ud.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
-                // refreshToken 없거나 만료되면 그냥 통과 → 이후 인증이 필요한 엔드포인트에서 401 처리
+                // refreshToken 없거나 만료되면 그냥 통과
             }
         } catch (JwtException | IllegalArgumentException ex) {
             // 토큰 파싱·검증 에러 시 SecurityContext 초기화
