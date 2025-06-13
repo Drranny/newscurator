@@ -1,87 +1,112 @@
 <!DOCTYPE html>
+<!-- 
+    뉴스 큐레이션 서비스의 카테고리별 뉴스 페이지
+    특정 카테고리(AI, 하드웨어, 데이터, 보안)의 뉴스를 모아서 보여주는 페이지
+-->
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- 기본 메타 정보 설정 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 동적 제목: 선택된 카테고리명을 포함 -->
     <title th:text="${category} + ' 뉴스 - 뉴스 큐레이션'">카테고리 뉴스 - 뉴스 큐레이션</title>
+    
+    <!-- 외부 라이브러리: Font Awesome 아이콘 CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 프로젝트 내부 스타일시트 연결 -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    
     <style>
+        /* CSS 변수 정의: 전역에서 사용할 컬러 팔레트 및 스타일 값 */
         :root {
-            --primary-color: #0ABAB5;
-            --primary-hover: #089B97;
-            --secondary-color: #7FDBD4;
-            --accent-color: #00E5DE;
-            --text-color: #f7f7f7;
-            --text-secondary: #a0a0a0;
-            --bg-color: #000000;
-            --bg-secondary: #1a1a1a;
-            --bg-card: #222222;
-            --bg-dark: #111111;
-            --border-color: #333333;
+            --primary-color: #0ABAB5;        /* 메인 컬러 (청록색) */
+            --primary-hover: #089B97;        /* 메인 컬러 호버 상태 */
+            --secondary-color: #7FDBD4;      /* 보조 컬러 (밝은 청록색) */
+            --accent-color: #00E5DE;         /* 강조 컬러 (네온 청록색) */
+            --text-color: #f7f7f7;           /* 기본 텍스트 컬러 */
+            --text-secondary: #a0a0a0;       /* 보조 텍스트 컬러 */
+            --bg-color: #000000;             /* 메인 배경 컬러 (검은색) */
+            --bg-secondary: #1a1a1a;         /* 보조 배경 컬러 (어두운 회색) */
+            --bg-card: #222222;              /* 카드 배경 컬러 */
+            --bg-dark: #111111;              /* 더 어두운 배경 컬러 */
+            --border-color: #333333;         /* 기본 테두리 컬러 */
+            
+            /* 그라데이션 스타일 정의 */
             --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             --gradient-accent: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            
+            /* 그림자 효과 */
             --shadow-glow: 0 0 20px rgba(0, 229, 222, 0.3);
+            
+            /* 애니메이션 전환 효과 */
             --transition-smooth: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            
+            /* 슬라이더 및 통계 섹션 배경 */
             --slider-bg: linear-gradient(135deg, #0ABAB5 0%, #7FDBD4 60%, #00E5DE 100%);
             --stats-bg: linear-gradient(135deg, #0ABAB5 0%, #7FDBD4 60%, #00E5DE 100%);
         }
 
+        /* 모든 요소에 box-sizing: border-box 적용하여 패딩/마진 계산 일관성 확보 */
         * {
             box-sizing: border-box;
         }
 
+        /* 전체 페이지 기본 스타일 설정 */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* 대각선 그라데이션 배경 */
             background: linear-gradient(135deg, var(--bg-color) 0%, #0a0a0a 100%);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.6;                    /* 가독성을 위한 줄간격 */
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
+            overflow-x: hidden;                  /* 가로 스크롤 방지 */
         }
 
-        /* 배경 파티클 효과 */
+        /* 배경 파티클 효과: 페이지 전체에 미묘한 시각적 효과 */
         body::before {
             content: '';
-            position: fixed;
+            position: fixed;                     /* 스크롤에 고정 */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            /* 여러 개의 원형 그라데이션을 겹쳐서 파티클 효과 생성 */
             background: 
                 radial-gradient(circle at 20% 50%, rgba(0, 102, 204, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            pointer-events: none;                /* 클릭 이벤트 차단 */
+            z-index: -1;                        /* 다른 요소들 뒤로 배치 */
         }
 
+        /* 반응형 컨테이너: 최대 너비 제한 및 중앙 정렬 */
         .container {
             max-width: 1280px;
             margin: 0 auto;
             padding: 0 1rem;
         }
 
+        /* 전체 너비 사용하는 섹션용 클래스 */
         .full-width {
             width: 100%;
             margin: 0;
             padding: 0;
         }
 
-        /* 네비게이션 스타일 */
+        /* === 네비게이션 스타일 === */
         .top-nav {
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.95);    /* 반투명 검은 배경 */
+            backdrop-filter: blur(10px);         /* 배경 블러 효과 */
             border-bottom: 1px solid var(--border-color);
-            position: sticky;
+            position: sticky;                    /* 스크롤 시 상단 고정 */
             top: 0;
-            z-index: 1000;
+            z-index: 1000;                      /* 다른 요소보다 위에 표시 */
         }
 
         .nav-wrapper {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between;      /* 양쪽 끝 정렬 */
             align-items: center;
             height: 4rem;
             max-width: 1280px;
@@ -94,6 +119,7 @@
             align-items: center;
         }
 
+        /* 모바일 메뉴 버튼 */
         .menu-button {
             padding: 0.75rem;
             color: var(--text-secondary);
@@ -107,7 +133,7 @@
         .menu-button:hover {
             color: var(--text-color);
             background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
+            transform: scale(1.05);             /* 호버 시 약간 확대 */
         }
 
         .main-nav {
@@ -116,6 +142,7 @@
             margin-left: 1.5rem;
         }
 
+        /* 로고 영역 */
         .nav-logo {
             display: flex;
             align-items: center;
@@ -130,9 +157,11 @@
             height: 2.2rem;
             vertical-align: middle;
             margin-right: 0.5rem;
+            /* 로고에 발광 효과 추가 */
             filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
         }
 
+        /* 브랜드 텍스트: 그라데이션 텍스트 효과 */
         .nav-brand {
             font-weight: bold;
             padding: 0.75rem;
@@ -140,6 +169,7 @@
             text-decoration: none;
             font-size: 1.75rem;
             margin-right: 1rem;
+            /* 텍스트에 그라데이션 적용 */
             background: var(--gradient-accent);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -147,6 +177,7 @@
             text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
         }
 
+        /* 카테고리 메뉴 */
         .category-menu {
             display: flex;
             gap: 1.5rem;
@@ -164,28 +195,30 @@
             overflow: hidden;
         }
 
+        /* 카테고리 아이템 배경 애니메이션 */
         .category-item::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
+            left: -100%;                        /* 화면 밖에서 시작 */
             width: 100%;
             height: 100%;
             background: var(--gradient-primary);
-            transition: left 0.3s ease;
+            transition: left 0.3s ease;        /* 슬라이드 애니메이션 */
             z-index: -1;
         }
 
         .category-item:hover::before {
-            left: 0;
+            left: 0;                           /* 호버 시 배경이 왼쪽에서 슬라이드 */
         }
 
         .category-item:hover, .category-item.active {
             color: var(--text-color);
-            transform: translateY(-2px);
+            transform: translateY(-2px);       /* 호버 시 위로 이동 */
             box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
         }
 
+        /* 네비게이션 오른쪽 영역 */
         .nav-right {
             display: flex;
             align-items: center;
@@ -207,17 +240,19 @@
             transform: translateY(-2px);
         }
 
+        /* 구분자 */
         .divider {
             color: #444444;
             margin: 0 0.25rem;
         }
 
-        /* 메인 컨텐츠 스타일 */
+        /* === 메인 콘텐츠 스타일 === */
         .main-content {
             background-color: var(--bg-color);
             padding: 2rem 0 3rem;
         }
 
+        /* 페이지 헤더 영역 */
         .page-header {
             text-align: center;
             margin-bottom: 2rem;
@@ -227,6 +262,7 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            /* 제목에 그라데이션 텍스트 효과 */
             background: var(--gradient-accent);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -239,6 +275,7 @@
             font-size: 1.1rem;
         }
 
+        /* === 정렬 드롭다운 스타일 === */
         .sort-dropdown {
             position: relative;
             display: inline-block;
@@ -274,8 +311,9 @@
             box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
         }
 
+        /* 드롭다운 메뉴 */
         .dropdown-content {
-            display: none;
+            display: none;                      /* 기본적으로 숨김 */
             position: absolute;
             background: rgba(26, 26, 26, 0.95);
             backdrop-filter: blur(10px);
@@ -290,7 +328,7 @@
         }
 
         .dropdown-content.show {
-            display: block;
+            display: block;                    /* 활성화 시 표시 */
         }
 
         .dropdown-item {
@@ -304,7 +342,7 @@
 
         .dropdown-item:hover {
             background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
+            transform: translateX(5px);        /* 호버 시 오른쪽으로 이동 */
         }
 
         .dropdown-item.active {
@@ -320,9 +358,9 @@
             border-radius: 0 0 16px 16px;
         }
 
-        /* 슬라이더 스타일 - 화면 꽉 차게 */
+        /* === 슬라이더 스타일 (화면 전체 너비) === */
         .slider-hero-bg {
-            width: 100vw;
+            width: 100vw;                      /* 뷰포트 전체 너비 */
             background: var(--slider-bg);
             padding: 2rem 0 1rem 0;
             display: flex;
@@ -331,6 +369,7 @@
             min-height: 350px;
             box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.10);
             position: relative;
+            /* 컨테이너 밖으로 나가는 트릭 */
             left: 50%;
             right: 50%;
             margin-left: -50vw;
@@ -351,6 +390,7 @@
             position: relative;
         }
 
+        /* 슬라이더 래퍼 */
         .slider-wrapper {
             position: relative;
             width: 100%;
@@ -367,7 +407,7 @@
         }
 
         .slide-item {
-            min-width: 100%;
+            min-width: 100%;                   /* 각 슬라이드가 전체 너비 차지 */
             flex-shrink: 0;
             position: relative;
             border-radius: 18px;
@@ -379,18 +419,18 @@
         }
 
         .slide-image {
-            width: 60%;
+            width: 60%;                        /* 이미지가 60% 차지 */
             height: 100%;
             object-fit: cover;
             transition: var(--transition-smooth);
         }
 
         .slide-item:hover .slide-image {
-            transform: scale(1.05);
+            transform: scale(1.05);            /* 호버 시 이미지 확대 */
         }
 
         .slide-content {
-            width: 40%;
+            width: 40%;                        /* 콘텐츠가 40% 차지 */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -404,6 +444,7 @@
             margin-bottom: 1rem;
             line-height: 1.4;
             color: #fff;
+            /* 텍스트 넘침 처리: 3줄까지만 표시 */
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -423,7 +464,7 @@
             font-size: 1.1rem;
         }
 
-        /* 슬라이더 컨트롤 */
+        /* === 슬라이더 컨트롤 === */
         .slider-controls {
             position: absolute;
             bottom: 2rem;
@@ -457,6 +498,7 @@
             box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
         }
 
+        /* 슬라이더 인디케이터 */
         .indicators {
             display: flex;
             gap: 0.5rem;
@@ -481,7 +523,7 @@
             box-shadow: 0 0 15px rgba(0, 229, 222, 0.6);
         }
 
-        /* 뉴스 섹션 스타일 */
+        /* === 뉴스 섹션 스타일 === */
         .news-section {
             margin-bottom: 4rem;
         }
@@ -491,7 +533,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
+            flex-wrap: wrap;                   /* 모바일에서 줄바꿈 허용 */
             gap: 1rem;
         }
 
@@ -508,6 +550,7 @@
             padding-left: 2rem;
         }
 
+        /* 섹션 제목 왼쪽 장식 바 */
         .section-title::before {
             content: '';
             position: absolute;
@@ -520,6 +563,7 @@
             box-shadow: 0 0 15px rgba(0, 102, 204, 0.5);
         }
 
+        /* 섹션 제목 아래 장식 선 */
         .section-title::after {
             content: '';
             position: absolute;
@@ -545,7 +589,7 @@
             flex-wrap: wrap;
         }
 
-        /* 뷰 전환 버튼 스타일 */
+        /* === 뷰 전환 버튼 스타일 === */
         .view-toggle {
             display: flex;
             align-items: center;
@@ -580,7 +624,7 @@
             box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
         }
 
-        /* 뉴스 그리드 스타일 */
+        /* === 뉴스 그리드 스타일 === */
         .news-grid-container {
             max-width: 1200px;
             margin: 0 auto 4rem;
@@ -588,14 +632,14 @@
 
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, 1fr);  /* 기본: 4열 그리드 */
             gap: 1.5rem;
             transition: all 0.3s ease;
         }
 
         /* 리스트 뷰 스타일 */
         .news-grid.list-view {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr;        /* 리스트 뷰: 1열 */
             gap: 1rem;
         }
 
@@ -612,6 +656,7 @@
             border: 1px solid transparent;
         }
 
+        /* 뉴스 아이템 호버 시 발광 효과 */
         .news-item::before {
             content: '';
             position: absolute;
@@ -650,7 +695,7 @@
             flex-grow: 1;
         }
 
-        /* 리스트 뷰에서의 뉴스 아이템 */
+        /* 리스트 뷰에서의 뉴스 아이템 조정 */
         .news-grid.list-view .news-item {
             flex-direction: column;
             height: auto;
@@ -658,13 +703,13 @@
         }
 
         .news-grid.list-view .news-link {
-            flex-direction: row;
+            flex-direction: row;               /* 리스트 뷰에서는 가로 배치 */
             height: 180px;
             min-height: 180px;
         }
 
         .news-grid.list-view .news-item:hover {
-            transform: translateX(10px);
+            transform: translateX(10px);       /* 리스트 뷰에서는 옆으로 이동 */
         }
 
         .news-image {
@@ -696,7 +741,7 @@
             z-index: 2;
         }
 
-        /* 리스트 뷰에서의 컨텐츠 */
+        /* 리스트 뷰에서의 콘텐츠 */
         .news-grid.list-view .news-content {
             padding: 1.5rem 2rem;
             justify-content: flex-start;
@@ -704,45 +749,7 @@
             min-height: 180px;
         }
 
-        /* 리스트 뷰에서 제목과 설명이 잘 보이도록 */
-        .news-grid.list-view .news-title {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: #fff;
-            -webkit-line-clamp: unset;
-            overflow: visible;
-            display: block;
-        }
-        .news-grid.list-view .news-description {
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: var(--text-secondary);
-            -webkit-line-clamp: unset;
-            overflow: visible;
-            display: block;
-        }
-
-        /* 요약 섹션 스타일 */
-        .summary-section {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* 리스트 뷰에서의 요약 섹션 */
-        .news-grid.list-view .summary-section {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 0;
-        }
-
+        /* 키워드 스타일 */
         .news-keywords {
             display: flex;
             flex-wrap: wrap;
@@ -767,6 +774,7 @@
             line-height: 1.4;
             margin-bottom: 0.75rem;
             color: #fff;
+            /* 텍스트 넘침 처리: 2줄까지만 표시 */
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -782,34 +790,17 @@
             color: var(--accent-color);
         }
 
-        .news-summary {
-            font-size: 0.9rem;
+        .news-description {
             color: var(--text-secondary);
-            line-height: 1.5;
+            font-size: 0.9rem;
+            line-height: 1.4;
             margin-bottom: 1rem;
+            /* 텍스트 넘침 처리: 2줄까지만 표시 */
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            flex-grow: 1;
-        }
-
-        /* 리스트 뷰에서의 요약 스타일 */
-        .news-grid.list-view .news-summary {
-            -webkit-line-clamp: 2;
-            margin-bottom: 1.5rem;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* 리스트 뷰에서의 제목 스타일 */
-        .news-grid.list-view .news-title {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: #fff;
-            -webkit-line-clamp: unset;
-            overflow: visible;
-            display: block;
+            text-overflow: ellipsis;
         }
 
         .news-meta {
@@ -829,6 +820,19 @@
             color: white;
             font-weight: 500;
             box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+        }
+
+        /* === 요약 섹션 스타일 === */
+        .summary-section {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            z-index: 2;
         }
 
         /* 요약 버튼 스타일 */
@@ -874,8 +878,8 @@
             font-size: 0.9rem;
             line-height: 1.6;
             color: var(--text-color);
-            display: none;
-            animation: fadeIn 0.3s ease;
+            display: none;                     /* 기본적으로 숨김 */
+            animation: fadeIn 0.3s ease;      /* 나타날 때 페이드인 효과 */
         }
 
         .news-full-content.show {
@@ -884,7 +888,7 @@
 
         .news-full-content p {
             margin: 0;
-            white-space: pre-line;
+            white-space: pre-line;            /* 줄바꿈 문자 인식 */
         }
 
         @keyframes fadeIn {
@@ -892,7 +896,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 통계 섹션 스타일 */
+        /* === 통계 섹션 스타일 (화면 전체 너비) === */
         .stats-section-wrapper {
             width: 100vw;
             background: var(--stats-bg);
@@ -900,6 +904,7 @@
             margin: 3rem 0 0 0;
             box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.20);
             position: relative;
+            /* 컨테이너 밖으로 나가는 트릭 */
             left: 50%;
             right: 50%;
             margin-left: -50vw;
@@ -964,7 +969,7 @@
             opacity: 0.8;
         }
 
-        /* 더보기 버튼 스타일 */
+        /* === 더보기 버튼 스타일 === */
         .load-more-container {
             display: flex;
             justify-content: center;
@@ -993,7 +998,7 @@
             display: none;
         }
 
-        /* 비었을 때 메시지 */
+        /* === 빈 상태 메시지 === */
         .no-articles {
             max-width: 600px;
             margin: 0 auto;
@@ -1022,34 +1027,27 @@
             color: var(--text-secondary);
         }
 
-        .news-description {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* 반응형 설정 */
+        /* === 반응형 디자인 === */
+        
+        /* 큰 화면에서 그리드 조정 */
         @media (max-width: 1200px) {
             .news-grid:not(.list-view) {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
 
+        /* 태블릿 화면 */
         @media (max-width: 992px) {
             .nav-brand {
                 font-size: 1.5rem;
             }
 
+            /* 모바일에서 카테고리 메뉴 숨김 */
             .category-menu {
                 display: none;
             }
 
+            /* 슬라이더 레이아웃 변경 */
             .slide-item {
                 flex-direction: column;
                 height: 450px;
@@ -1066,9 +1064,11 @@
             .slide-title {
                 font-size: 1.6rem;
             }
+            
             .news-grid:not(.list-view) {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
             .stats-container {
                 grid-template-columns: 1fr;
                 gap: 2rem;
@@ -1092,9 +1092,6 @@
             .news-grid.list-view .news-content {
                 padding: 1.5rem;
             }
-            .news-grid.list-view .summary-section {
-                padding: 1rem 1.5rem;
-            }
             
             /* 모바일에서 섹션 헤더 세로 배치 */
             .section-header {
@@ -1108,6 +1105,7 @@
             }
         }
 
+        /* 모바일 화면 */
         @media (max-width: 768px) {
             .container {
                 padding: 0 0.75rem;
@@ -1136,6 +1134,7 @@
             }
         }
 
+        /* 작은 모바일 화면 */
         @media (max-width: 576px) {
             .slide-title {
                 font-size: 1.3rem;
@@ -1156,6 +1155,7 @@
             }
         }
 
+        /* 링크 밑줄 제거 */
         .slide-title a, .news-title a {
             text-decoration: none !important;
         }
@@ -1163,7 +1163,7 @@
             border-bottom: none !important;
         }
 
-        /* 커스텀 스크롤바 */
+        /* === 커스텀 스크롤바 === */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -1183,15 +1183,18 @@
     </style>
 </head>
 <body>
-    <!-- 상단 네비게이션 바 - 메인 페이지와 완전히 동일 -->
+    <!-- 상단 네비게이션 바 - 메인 페이지와 동일한 구조 -->
     <nav class="top-nav">
         <div class="nav-wrapper">
             <div class="nav-left">
                 <div class="main-nav">
+                    <!-- 로고와 브랜드명 -->
                     <a class="nav-logo" th:href="@{/}">
                         <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
                     </a>
                     <a class="nav-brand" th:href="@{/}">CuraT</a>
+                    
+                    <!-- 카테고리 메뉴: 현재 선택된 카테고리에 active 클래스 적용 -->
                     <div class="category-menu">
                         <a class="category-item" th:classappend="${category == 'AI'} ? 'active' : ''" th:href="@{/category/AI}">AI</a>
                         <a class="category-item" th:classappend="${category == '하드웨어'} ? 'active' : ''" th:href="@{/category/하드웨어}">하드웨어</a>
@@ -1201,11 +1204,13 @@
                 </div>
             </div>
             
+            <!-- 네비게이션 오른쪽: 기능 버튼들 -->
             <div class="nav-right">
                 <a class="icon-button" th:href="@{/analytics}">
                     <i class="fas fa-chart-bar"></i>
                 </a>
                 <span class="divider">|</span>
+                <!-- 로그인 상태에 따른 조건부 렌더링 -->
                 <a class="nav-button" th:if="${isLoggedIn}" th:href="@{/auth/logout}">
                         로그아웃
                     </a>
@@ -1220,29 +1225,34 @@
         </div>
     </nav>
 
-    <!-- 메인 컨텐츠 영역 -->
+    <!-- 메인 콘텐츠 영역 -->
     <main class="main-content">
         <div class="container">
-            <!-- 페이지 헤더 -->
+            <!-- 페이지 헤더: 카테고리 제목과 설명 -->
             <div class="page-header">
                 <h1 class="category-title" th:text="${category} + ' 뉴스'">카테고리 뉴스</h1>
                 <p class="category-subtitle" th:text="${category} + '와 관련된 최신 트렌드와 기술 뉴스'">관련된 최신 트렌드와 기술 뉴스</p>
             </div>
         </div>
 
-        <!-- 추천 뉴스 슬라이더 - 화면 꽉 차게 -->
+        <!-- 추천 뉴스 슬라이더 - 화면 전체 너비를 차지하는 히어로 섹션 -->
         <div th:if="${not articles.empty}" class="slider-hero-bg">
             <div class="slider-container">
                 <div class="recommended-news">
                     <div class="slider-wrapper">
                         <div class="slider-track" id="sliderTrack">
+                            <!-- 상위 3개 뉴스를 슬라이더로 표시 -->
                             <div th:each="article, stat : ${articles}" th:if="${stat.index < 3}" class="slide-item">
+                                <!-- 뉴스 이미지: 없으면 기본 이미지 사용 -->
                                 <img th:src="${article.urlToImage != null ? article.urlToImage : 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&h=400&fit=crop'}" 
                                      src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&h=400&fit=crop" 
                                      class="slide-image" 
                                      alt="News Image">
+                                
+                                <!-- 뉴스 콘텐츠 -->
                                 <div class="slide-content">
                                     <h3 class="slide-title">
+                                        <!-- 클릭 추적 기능이 있는 링크 -->
                                         <a th:href="${article.url}" th:text="${article.title}"  
                                         class="js-record-click"
                                         th:data-title="|[[${article.title}]]|"
@@ -1250,6 +1260,7 @@
                                         th:data-keywords="|[[${article.keywords != null ? article.keywords : ''}]]|"
                                         target="_blank">추천 뉴스 제목</a>
                                     </h3>
+                                    <!-- 메타 정보: 출처와 날짜 -->
                                     <div class="slide-meta">
                                         <span th:text="${article.sourceName}">출처</span>
                                         <span th:text="${#temporals.format(article.publishedAt, 'yyyy-MM-dd')}">날짜</span>
@@ -1259,11 +1270,12 @@
                         </div>
                     </div>
                     
-                    <!-- 슬라이더 컨트롤 -->
+                    <!-- 슬라이더 컨트롤: 여러 뉴스가 있을 때만 표시 -->
                     <div class="slider-controls" th:if="${articles.size() > 1}">
                         <button class="arrow-button" id="prevBtn">
                             <i class="fas fa-chevron-left"></i>
                         </button>
+                        <!-- 슬라이드 인디케이터 -->
                         <div class="indicators">
                             <div class="indicator active" th:each="article, stat : ${articles}" th:if="${stat.index < 3}"
                                  th:attr="data-slide=${stat.index}"></div>
@@ -1277,29 +1289,31 @@
         </div>
 
         <div class="container">
-            <!-- 뉴스가 없을 때 -->
+            <!-- 뉴스가 없을 때 표시되는 메시지 -->
             <div th:if="${articles.empty}" class="no-articles">
                 <i class="fas fa-newspaper"></i>
                 <h3>해당 카테고리의 뉴스가 없습니다</h3>
                 <p>곧 새로운 뉴스가 업데이트될 예정입니다</p>
             </div>
             
-            <!-- 최신 뉴스 섹션 -->
+            <!-- 최신 뉴스 섹션: 뉴스가 있을 때만 표시 -->
             <div th:if="${not articles.empty}" class="news-section">
-                <!-- 섹션 헤더 - 제목과 컨트롤 -->
+                <!-- 섹션 헤더: 제목과 컨트롤 버튼들 -->
                 <div class="section-header">
                     <div class="section-info">
                         <h2 class="section-title">최신 뉴스</h2>
                         <p class="section-subtitle">가장 최근에 업데이트된 뉴스를 확인하세요</p>
                     </div>
                     <div class="section-controls">
-                        <!-- 정렬 기준 드롭다운 -->
+                        <!-- 정렬 기준 선택 드롭다운 -->
                         <div class="sort-dropdown">
                             <button class="dropdown-button" id="sortTypeBtn">
+                                <!-- 현재 정렬 상태를 표시 -->
                                 <span th:text="${currentSort == 'latest' ? '최신순' : (currentSort == 'views' ? '조회수순' : (currentSort == 'title' ? '제목순' : '최신순'))}">최신순</span>
                                 <i class="fas fa-chevron-down"></i>
                             </button>
                             <div class="dropdown-content" id="sortTypeContent">
+                                <!-- 각 정렬 옵션: 현재 선택된 항목에 active 클래스 -->
                                 <a th:href="@{/category/{category}(category=${category}, sort='latest', direction=${currentDirection})}"
                                    th:class="${currentSort == 'latest'} ? 'dropdown-item active' : 'dropdown-item'"
                                    class="dropdown-item">최신순</a>
@@ -1312,7 +1326,7 @@
                             </div>
                         </div>
                         
-                        <!-- 정렬 방향 드롭다운 -->
+                        <!-- 정렬 방향 선택 드롭다운 -->
                         <div class="sort-dropdown">
                             <button class="dropdown-button" id="sortDirectionBtn">
                                 <span th:text="${currentDirection == 'desc' ? '내림차순' : '오름차순'}">내림차순</span>
@@ -1328,7 +1342,7 @@
                             </div>
                         </div>
                         
-                        <!-- 뷰 전환 버튼 -->
+                        <!-- 뷰 전환 버튼: 카드/리스트 보기 -->
                         <div class="view-toggle">
                             <button class="view-button active" id="gridViewBtn" title="카드 보기">
                                 <i class="fas fa-th-large"></i>
@@ -1340,32 +1354,39 @@
                     </div>
                 </div>
                 
+                <!-- 뉴스 그리드 컨테이너 -->
                 <div class="news-grid-container">
                     <div class="news-grid">
+                        <!-- 뉴스 아이템들: 처음 8개만 표시하고 나머지는 숨김 -->
                         <div th:each="article, stat : ${articles}" 
                              th:class="${stat.index >= 0 and stat.index < 8} ? 'news-item' : 'news-item hidden'"
                              th:if="${stat.index < 20}">
+                            
+                            <!-- 뉴스 링크: 클릭 추적 기능 포함 -->
                             <a th:href="${article.url}" target="_blank" class="news-link js-record-click"
                             th:data-title="|[[${article.title}]]|"
                             th:data-category="|[[${category}]]|"
                             th:data-keywords="|[[${article.keywords != null ? article.keywords : ''}]]|">
+                                
+                                <!-- 뉴스 이미지 -->
                                 <img th:src="${article.urlToImage != null ? article.urlToImage : 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop'}" 
                                      src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop" 
                                      class="news-image" 
                                      alt="News Image">
+                                
+                                <!-- 뉴스 콘텐츠 -->
                                 <div class="news-content">
-                                    <!-- 백엔드에서 실제 키워드를 가져와 표시 -->
+                                    <!-- 키워드 표시: 백엔드에서 제공되는 키워드 우선 -->
                                     <div class="news-keywords">
-                                        <!-- 백엔드에서 실제 키워드가 있는 경우 우선 표시 -->
+                                        <!-- 백엔드에서 실제 키워드가 있는 경우 -->
                                         <div th:if="${article.keywords != null and not #lists.isEmpty(article.keywords)}">
                                             <span th:each="keyword : ${article.keywords}" 
                                                   th:text="'#' + ${keyword}" 
                                                   class="news-keyword"></span>
                                         </div>
                                         
-                                        <!-- 백엔드 키워드가 없을 때만 임시 키워드 표시 -->
+                                        <!-- 백엔드 키워드가 없을 때 카테고리별 기본 키워드 표시 -->
                                         <div th:if="${article.keywords == null or #lists.isEmpty(article.keywords)}">
-                                            <!-- 카테고리별 기본 키워드 -->
                                             <span class="news-keyword" th:text="'#' + ${category}"></span>
                                             <span th:if="${category == 'AI'}" class="news-keyword">#인공지능</span>
                                             <span th:if="${category == '하드웨어'}" class="news-keyword">#반도체</span>
@@ -1375,9 +1396,12 @@
                                         </div>
                                     </div>
                                     
+                                    <!-- 뉴스 제목 -->
                                     <h3 class="news-title" th:text="${article.title}">뉴스 제목</h3>
+                                    <!-- 뉴스 설명 -->
                                     <p class="news-description" th:text="${article.description}">뉴스 요약</p>
                                     
+                                    <!-- 메타 정보: 출처와 날짜 -->
                                     <div class="news-meta">
                                         <span class="news-source" th:text="${article.sourceName}">출처</span>
                                         <span th:text="${#temporals.format(article.publishedAt, 'MM-dd')}">날짜</span>
@@ -1385,7 +1409,7 @@
                                 </div>
                             </a>
                             
-                            <!-- 요약 버튼과 내용 - a 태그 완전히 밖에 위치 -->
+                            <!-- 요약 버튼과 내용 - 링크 외부에 배치하여 클릭 이벤트 분리 -->
                             <div class="summary-section">
                                 <button class="summary-button" 
                                         th:attr="data-description=${article.description}"
@@ -1402,16 +1426,15 @@
                         </div>
                     </div>
                     
-                    <!-- 더보기 버튼 -->
+                    <!-- 더보기 버튼: 8개 이상의 뉴스가 있을 때만 표시 -->
                     <div th:if="${articles.size() > 8}" class="load-more-container">
                         <button id="loadMoreBtn" class="load-more-button">더보기</button>
                     </div>
                 </div>
             </div>
 
-            <!-- 인기 뉴스 섹션 -->
+            <!-- 인기 뉴스 섹션: 충분한 뉴스가 있을 때만 표시 -->
             <div th:if="${not articles.empty and articles.size() > 8}" class="news-section">
-                <!-- 섹션 헤더 - 제목과 컨트롤 -->
                 <div class="section-header">
                     <div class="section-info">
                         <h2 class="section-title">인기 뉴스</h2>
@@ -1443,11 +1466,14 @@
                     </div>
                 </div>
                 
+                <!-- 인기 뉴스 그리드: 8-12번째 뉴스 표시 -->
                 <div class="news-grid-container">
                     <div class="news-grid" id="popularNewsGrid">
                         <div th:each="article, stat : ${articles}" 
                              th:class="'news-item'"
                              th:if="${stat.index >= 8 and stat.index < 12}">
+                            
+                            <!-- 인기 뉴스 아이템 구조는 최신 뉴스와 동일 -->
                             <a th:href="${article.url}" target="_blank" class="news-link js-record-click"
                             th:data-title="|[[${article.title}]]|"
                             th:data-category="|[[${category}]]|"
@@ -1457,18 +1483,14 @@
                                      class="news-image" 
                                      alt="News Image">
                                 <div class="news-content">
-                                    <!-- 백엔드에서 실제 키워드를 가져와 표시 -->
                                     <div class="news-keywords">
-                                        <!-- 백엔드에서 실제 키워드가 있는 경우 우선 표시 -->
                                         <div th:if="${article.keywords != null and not #lists.isEmpty(article.keywords)}">
                                             <span th:each="keyword : ${article.keywords}" 
                                                   th:text="'#' + ${keyword}" 
                                                   class="news-keyword"></span>
                                         </div>
                                         
-                                        <!-- 백엔드 키워드가 없을 때만 임시 키워드 표시 -->
                                         <div th:if="${article.keywords == null or #lists.isEmpty(article.keywords)}">
-                                            <!-- 카테고리별 기본 키워드 -->
                                             <span class="news-keyword" th:text="'#' + ${category}"></span>
                                             <span th:if="${category == 'AI'}" class="news-keyword">#인공지능</span>
                                             <span th:if="${category == '하드웨어'}" class="news-keyword">#반도체</span>
@@ -1488,7 +1510,7 @@
                                 </div>
                             </a>
                             
-                            <!-- 요약 버튼과 내용 - a 태그 완전히 밖에 위치 -->
+                            <!-- 요약 버튼과 내용 -->
                             <div class="summary-section">
                                 <button class="summary-button" 
                                         th:attr="data-description=${article.description}"
@@ -1497,7 +1519,6 @@
                                     전체보기
                                 </button>
                                 
-                                <!-- 전체 기사 내용 표시 영역 -->
                                 <div class="news-full-content">
                                     <p th:text="${article.description}">전체 기사 내용이 여기에 표시됩니다</p>
                                 </div>
@@ -1509,16 +1530,18 @@
         </div>
     </main>
 
-    <!-- 통계 섹션 - 화면 꽉차게 -->
+    <!-- 통계 섹션 - 화면 전체 너비를 차지하는 섹션 -->
     <div th:if="${not articles.empty}" class="stats-section-wrapper">
         <div class="stats-section">
             <h2 class="stats-title">오늘의 뉴스 현황</h2>
             <div class="stats-container">
+                <!-- 오늘 업데이트된 뉴스 수 -->
                 <div class="stat-item">
                     <div class="stat-label">오늘 업데이트</div>
                     <span class="stat-number" th:text="${todayArticlesCount != null ? todayArticlesCount : 5}">5</span>
                     <span class="stat-unit">개</span>
                 </div>
+                <!-- 총 뉴스 수 -->
                 <div class="stat-item">
                     <div class="stat-label">총 뉴스</div>
                     <span class="stat-number" th:text="${articles.size()}">0</span>
@@ -1529,10 +1552,16 @@
     </div>
 
     <script>
-        // 전체 기사 내용 보기 기능
+        /**
+         * 전체 기사 내용 토글 기능
+         * 요약 버튼 클릭 시 전체 내용을 보여주거나 숨김
+         * @param {HTMLElement} button - 클릭된 버튼 요소
+         * @param {Event} event - 클릭 이벤트 객체
+         */
         function toggleFullContent(button, event) {
             console.log('전체보기 버튼 클릭됨');
             
+            // 부모 요소들 찾기
             const summarySection = button.closest('.summary-section');
             const fullContent = summarySection.querySelector('.news-full-content');
             const buttonIcon = button.querySelector('i');
@@ -1540,8 +1569,9 @@
             
             console.log('fullContent:', fullContent);
             
-            // 전체 내용이 표시되어 있으면 숨기기
+            // 현재 표시 상태에 따라 토글
             if (fullContent.classList.contains('show')) {
+                // 전체 내용 숨기기
                 console.log('전체 내용 숨기기');
                 fullContent.classList.remove('show');
                 buttonIcon.className = 'fas fa-chevron-down';
@@ -1550,6 +1580,7 @@
                 }
                 button.classList.remove('expanded');
             } else {
+                // 전체 내용 보여주기
                 console.log('전체 내용 보여주기');
                 fullContent.classList.add('show');
                 buttonIcon.className = 'fas fa-chevron-up';
@@ -1560,8 +1591,14 @@
             }
         }
 
+        // DOM 로드 완료 후 초기화
         document.addEventListener('DOMContentLoaded', function() {
-            // 드롭다운 기능
+            
+            /**
+             * 드롭다운 메뉴 설정 함수
+             * @param {string} buttonId - 드롭다운 버튼 ID
+             * @param {string} contentId - 드롭다운 콘텐츠 ID
+             */
             function setupDropdown(buttonId, contentId) {
                 const button = document.getElementById(buttonId);
                 const content = document.getElementById(contentId);
@@ -1570,7 +1607,7 @@
                     button.addEventListener('click', function(e) {
                         e.stopPropagation();
                         
-                        // 다른 드롭다운 닫기
+                        // 다른 모든 드롭다운 닫기
                         document.querySelectorAll('.dropdown-content').forEach(dropdown => {
                             if (dropdown !== content) {
                                 dropdown.classList.remove('show');
@@ -1588,28 +1625,30 @@
             setupDropdown('sortDirectionBtn', 'sortDirectionContent');
             setupDropdown('popularSortBtn', 'popularSortContent');
             
-            // 뷰 전환 기능 - 최신 뉴스
+            // 뷰 전환 기능 - 최신 뉴스 섹션
             const gridViewBtn = document.getElementById('gridViewBtn');
             const listViewBtn = document.getElementById('listViewBtn');
             const newsGrid = document.querySelector('.news-grid');
             
             if (gridViewBtn && listViewBtn && newsGrid) {
-                // 카드 보기 버튼
+                // 카드 보기 버튼 클릭
                 gridViewBtn.addEventListener('click', function() {
                     newsGrid.classList.remove('list-view');
                     gridViewBtn.classList.add('active');
                     listViewBtn.classList.remove('active');
                     
+                    // 사용자 선택 저장
                     localStorage.setItem('newsViewMode', 'grid');
                     updateVisibleItems();
                 });
                 
-                // 리스트 보기 버튼
+                // 리스트 보기 버튼 클릭
                 listViewBtn.addEventListener('click', function() {
                     newsGrid.classList.add('list-view');
                     listViewBtn.classList.add('active');
                     gridViewBtn.classList.remove('active');
                     
+                    // 사용자 선택 저장
                     localStorage.setItem('newsViewMode', 'list');
                     updateVisibleItems();
                 });
@@ -1621,7 +1660,7 @@
                 }
             }
             
-            // 뷰 전환 기능 - 인기 뉴스
+            // 뷰 전환 기능 - 인기 뉴스 섹션
             const popularGridViewBtn = document.getElementById('popularGridViewBtn');
             const popularListViewBtn = document.getElementById('popularListViewBtn');
             const popularNewsGrid = document.getElementById('popularNewsGrid');
@@ -1640,13 +1679,17 @@
                 });
             }
             
-            // 뷰별 표시 개수 업데이트 함수
+            /**
+             * 뷰별 표시 개수 업데이트 함수
+             * 카드뷰와 리스트뷰에서 다른 개수의 아이템을 표시
+             */
             function updateVisibleItems() {
                 if (newsGrid) {
                     const isListView = newsGrid.classList.contains('list-view');
                     const allNewsItems = document.querySelectorAll('.news-section:first-of-type .news-item');
-                    const maxItems = isListView ? 6 : 8;
+                    const maxItems = isListView ? 6 : 8; // 리스트뷰: 6개, 카드뷰: 8개
                     
+                    // 표시할 아이템 수에 따라 숨김/표시 설정
                     allNewsItems.forEach((item, index) => {
                         if (index < maxItems) {
                             item.classList.remove('hidden');
@@ -1655,6 +1698,7 @@
                         }
                     });
                     
+                    // 더보기 버튼 텍스트 초기화
                     const loadMoreBtn = document.getElementById('loadMoreBtn');
                     if (loadMoreBtn) {
                         loadMoreBtn.textContent = '더보기';
@@ -1662,14 +1706,14 @@
                 }
             }
             
-            // 드롭다운 외부 클릭시 닫기
+            // 드롭다운 외부 클릭 시 모든 드롭다운 닫기
             document.addEventListener('click', function() {
                 document.querySelectorAll('.dropdown-content').forEach(dropdown => {
                     dropdown.classList.remove('show');
                 });
             });
             
-            // 이미지 로드 오류 처리
+            // 이미지 로드 오류 처리: 실패 시 기본 이미지로 대체
             const images = document.querySelectorAll('img');
             images.forEach(img => {
                 img.onerror = function() {
@@ -1689,6 +1733,7 @@
                     const hiddenNews = document.querySelectorAll('.news-item.hidden');
                     
                     if (hiddenNews.length > 0) {
+                        // 숨겨진 뉴스들을 추가로 표시
                         const showCount = isListView ? 6 : 8;
                         let count = 0;
                         hiddenNews.forEach(item => {
@@ -1698,10 +1743,12 @@
                             }
                         });
                         
+                        // 모든 뉴스가 표시되면 버튼 텍스트 변경
                         if (document.querySelectorAll('.news-item.hidden').length === 0) {
                             loadMoreBtn.textContent = '접기';
                         }
                     } else {
+                        // 모든 뉴스가 표시된 상태에서 클릭 시 다시 일부만 표시
                         const allNewsItems = document.querySelectorAll('.news-section:first-of-type .news-item');
                         const maxItems = isListView ? 6 : 8;
                         allNewsItems.forEach((item, index) => {
@@ -1714,20 +1761,25 @@
                 });
             }
             
-            // 슬라이더 기능
+            // 슬라이더 기능 구현
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const indicators = document.querySelectorAll('.indicator');
             const sliderTrack = document.getElementById('sliderTrack');
             const slideItems = document.querySelectorAll('.slide-item');
             
+            // 슬라이드가 여러 개 있을 때만 슬라이더 기능 활성화
             if (slideItems.length > 1 && sliderTrack) {
                 let currentIndex = 0;
                 
+                /**
+                 * 슬라이더 위치 업데이트 함수
+                 */
                 function updateSlider() {
-                    const translateX = -currentIndex * 100;
+                    const translateX = -currentIndex * 100; // 현재 인덱스에 따라 위치 계산
                     sliderTrack.style.transform = `translateX(${translateX}%)`;
                     
+                    // 인디케이터 활성 상태 업데이트
                     indicators.forEach((indicator, index) => {
                         if (index === currentIndex) {
                             indicator.classList.add('active');
@@ -1737,6 +1789,7 @@
                     });
                 }
                 
+                // 이전 버튼 클릭
                 if (prevBtn) {
                     prevBtn.addEventListener('click', function() {
                         currentIndex = (currentIndex - 1 + slideItems.length) % slideItems.length;
@@ -1744,6 +1797,7 @@
                     });
                 }
                 
+                // 다음 버튼 클릭
                 if (nextBtn) {
                     nextBtn.addEventListener('click', function() {
                         currentIndex = (currentIndex + 1) % slideItems.length;
@@ -1751,6 +1805,7 @@
                     });
                 }
                 
+                // 인디케이터 클릭
                 indicators.forEach((indicator, index) => {
                     indicator.addEventListener('click', function() {
                         currentIndex = index;
@@ -1758,22 +1813,32 @@
                     });
                 });
                 
-                // 자동 슬라이드
+                // 자동 슬라이드: 5초마다 다음 슬라이드로 이동
                 setInterval(() => {
                     currentIndex = (currentIndex + 1) % slideItems.length;
                     updateSlider();
                 }, 5000);
             }
 
-            // 페이지 로드 완료 후 애니메이션
+            // 페이지 로드 완료 후 페이드인 애니메이션
             setTimeout(() => {
                 document.body.style.opacity = '1';
             }, 100);
         });
     </script>
+    
+    <!-- 사용자 클릭 추적 기능 스크립트 -->
     <script th:inline="javascript">
+        // 클릭 기록 API 엔드포인트
         const RECORD_URL = '/user-articles/record';
         
+        /**
+         * 뉴스 클릭 기록 함수
+         * 사용자의 뉴스 읽기 패턴 분석을 위한 데이터 수집
+         * @param {string} title - 뉴스 제목
+         * @param {string} category - 뉴스 카테고리
+         * @param {string} keywords - 뉴스 키워드
+         */
         function recordClick(title, category, keywords) {
             fetch(RECORD_URL, {
                 method: 'POST',
@@ -1785,20 +1850,25 @@
                     articleCategory: category,
                     keywords: keywords
                 })
-            }).catch(console.error);
+            }).catch(console.error); // 에러는 조용히 처리 (사용자 경험 방해하지 않음)
         }
         
+        // DOM 로드 완료 후 클릭 추적 이벤트 리스너 등록
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.js-record-click').forEach(el => {
                 el.addEventListener('click', () => {
+                    // 데이터 속성에서 뉴스 정보 추출
                     const title    = el.dataset.title;
                     const category = el.dataset.category;
                     const keywords = el.dataset.keywords;
+                    // 클릭 기록 전송
                     recordClick(title, category, keywords);
                 });
             });
         });
-        </script>
+    </script>
+    
+    <!-- 로그아웃 확인 대화상자 스크립트 -->
     <script th:src="@{/js/quitLogout.js}"></script>
 </body>
 </html>
