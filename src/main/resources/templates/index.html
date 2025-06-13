@@ -1,79 +1,101 @@
 <!DOCTYPE html>
+<!-- 
+    뉴스 큐레이션 서비스의 메인 홈페이지
+    헤드라인 뉴스, 추천 뉴스, 인기 뉴스, IT 밈 등을 종합적으로 보여주는 대시보드 페이지
+    Thymeleaf 템플릿 엔진을 사용한 동적 웹페이지
+-->
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- 기본 메타 정보 설정 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>뉴스 큐레이션</title>
+    
+    <!-- 외부 라이브러리: Font Awesome 아이콘 CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 프로젝트 내부 스타일시트 연결 -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    
     <style>
+        /* CSS 변수 정의: 전역에서 사용할 컬러 팔레트 및 스타일 값 */
         :root {
-            --primary-color: #0ABAB5;
-            --primary-hover: #089B97;
-            --secondary-color: #7FDBD4;
-            --accent-color: #00E5DE;
-            --text-color: #f7f7f7;
-            --text-secondary: #a0a0a0;
-            --bg-color: #000000;
-            --bg-secondary: #1a1a1a;
-            --bg-card: #222222;
-            --bg-dark: #111111;
-            --border-color: #333333;
+            --primary-color: #0ABAB5;        /* 메인 컬러 (청록색) */
+            --primary-hover: #089B97;        /* 메인 컬러 호버 상태 */
+            --secondary-color: #7FDBD4;      /* 보조 컬러 (밝은 청록색) */
+            --accent-color: #00E5DE;         /* 강조 컬러 (네온 청록색) */
+            --text-color: #f7f7f7;           /* 기본 텍스트 컬러 */
+            --text-secondary: #a0a0a0;       /* 보조 텍스트 컬러 */
+            --bg-color: #000000;             /* 메인 배경 컬러 (검은색) */
+            --bg-secondary: #1a1a1a;         /* 보조 배경 컬러 (어두운 회색) */
+            --bg-card: #222222;              /* 카드 배경 컬러 */
+            --bg-dark: #111111;              /* 더 어두운 배경 컬러 */
+            --border-color: #333333;         /* 기본 테두리 컬러 */
+            
+            /* 그라데이션 스타일 정의 */
             --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             --gradient-accent: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            
+            /* 그림자 효과 */
             --shadow-glow: 0 0 20px rgba(0, 229, 222, 0.3);
+            
+            /* 애니메이션 전환 효과 */
             --transition-smooth: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         }
 
+        /* 모든 요소에 box-sizing: border-box 적용하여 패딩/마진 계산 일관성 확보 */
         * {
             box-sizing: border-box;
         }
 
+        /* 전체 페이지 기본 스타일 설정 */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* 대각선 그라데이션 배경 */
             background: linear-gradient(135deg, var(--bg-color) 0%, #0a0a0a 100%);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.6;                    /* 가독성을 위한 줄간격 */
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
+            overflow-x: hidden;                  /* 가로 스크롤 방지 */
         }
 
-        /* 배경 파티클 효과 */
+        /* 배경 파티클 효과: 페이지 전체에 미묘한 시각적 효과 */
         body::before {
             content: '';
-            position: fixed;
+            position: fixed;                     /* 스크롤에 고정 */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            /* 여러 개의 원형 그라데이션을 겹쳐서 파티클 효과 생성 */
             background: 
                 radial-gradient(circle at 20% 50%, rgba(0, 102, 204, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            pointer-events: none;                /* 클릭 이벤트 차단 */
+            z-index: -1;                        /* 다른 요소들 뒤로 배치 */
         }
 
+        /* 반응형 컨테이너: 최대 너비 제한 및 중앙 정렬 */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
 
-        /* 네비게이션 스타일 개선 */
+        /* === 네비게이션 스타일 === */
         .top-nav {
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.95);    /* 반투명 검은 배경 */
+            backdrop-filter: blur(10px);         /* 배경 블러 효과 */
             border-bottom: 1px solid var(--border-color);
-            position: sticky;
+            position: sticky;                    /* 스크롤 시 상단 고정 */
             top: 0;
-            z-index: 1000;
+            z-index: 1000;                      /* 다른 요소보다 위에 표시 */
         }
 
         .nav-wrapper {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between;      /* 양쪽 끝 정렬 */
             align-items: center;
             height: 4rem;
         }
@@ -83,6 +105,7 @@
             align-items: center;
         }
 
+        /* 모바일 메뉴 버튼 */
         .menu-button {
             padding: 0.75rem;
             color: var(--text-secondary);
@@ -96,7 +119,7 @@
         .menu-button:hover {
             color: var(--text-color);
             background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
+            transform: scale(1.05);             /* 호버 시 약간 확대 */
         }
 
         .main-nav {
@@ -104,6 +127,7 @@
             align-items: center;
         }
 
+        /* 로고 영역 */
         .nav-logo {
             display: flex;
             align-items: center;
@@ -118,9 +142,11 @@
             height: 2.2rem;
             vertical-align: middle;
             margin-right: 0.5rem;
+            /* 로고에 발광 효과 추가 */
             filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
         }
 
+        /* 브랜드 텍스트: 그라데이션 텍스트 효과 */
         .nav-brand {
             font-weight: bold;
             padding: 0.75rem;
@@ -128,6 +154,7 @@
             text-decoration: none;
             font-size: 1.75rem;
             margin-right: 1rem;
+            /* 텍스트에 그라데이션 적용 */
             background: var(--gradient-accent);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -135,6 +162,7 @@
             text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
         }
 
+        /* 카테고리 메뉴 */
         .category-menu {
             display: flex;
             gap: 1.5rem;
@@ -152,28 +180,30 @@
             overflow: hidden;
         }
 
+        /* 카테고리 아이템 배경 애니메이션 */
         .category-item::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
+            left: -100%;                        /* 화면 밖에서 시작 */
             width: 100%;
             height: 100%;
             background: var(--gradient-primary);
-            transition: left 0.3s ease;
+            transition: left 0.3s ease;        /* 슬라이드 애니메이션 */
             z-index: -1;
         }
 
         .category-item:hover::before {
-            left: 0;
+            left: 0;                           /* 호버 시 배경이 왼쪽에서 슬라이드 */
         }
 
         .category-item:hover, .category-item.active {
             color: var(--text-color);
-            transform: translateY(-2px);
+            transform: translateY(-2px);       /* 호버 시 위로 이동 */
             box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
         }
 
+        /* 네비게이션 오른쪽 영역 */
         .nav-right {
             display: flex;
             align-items: center;
@@ -195,12 +225,13 @@
             transform: translateY(-2px);
         }
 
+        /* 구분자 */
         .divider {
             color: #444444;
             margin: 0 0.25rem;
         }
 
-        /* 카테고리 내비게이션 개선 */
+        /* === 카테고리 네비게이션 === */
         .category-nav {
             background: rgba(26, 26, 26, 0.95);
             backdrop-filter: blur(10px);
@@ -242,7 +273,7 @@
             transform: translateY(-2px);
         }
 
-        /* 타임라인 버튼 특별 스타일 개선 */
+        /* 타임라인 버튼 특별 스타일: 더 눈에 띄는 디자인 */
         .nav-item.timeline-btn {
             background: var(--gradient-primary);
             color: white;
@@ -260,6 +291,7 @@
             box-shadow: var(--shadow-glow);
         }
 
+        /* 타임라인 버튼 배경 애니메이션 */
         .nav-item.timeline-btn::before {
             content: "";
             position: absolute;
@@ -275,6 +307,7 @@
             left: 100%;
         }
 
+        /* 타임라인 버튼 아이콘 펄스 애니메이션 */
         .nav-item.timeline-btn i {
             margin-right: 0.3rem;
             animation: pulse 2s infinite;
@@ -285,6 +318,7 @@
             50% { opacity: 0.7; }
         }
        
+        /* 검색 박스 */
         .search-box {
             position: relative;
             width: 100%;
@@ -333,7 +367,7 @@
             transform: translateY(-50%) scale(1.05);
         }
 
-        /* 슬라이더 스타일 개선 */
+        /* === 메인 슬라이더 스타일 === */
         .main-slider {
             position: relative;
             width: 100%;
@@ -351,7 +385,7 @@
         }
 
         .slider-item {
-            min-width: 100%;
+            min-width: 100%;                   /* 각 슬라이드가 전체 너비 차지 */
             height: 100%;
             position: relative;
         }
@@ -364,14 +398,16 @@
         }
 
         .slider-item:hover .slider-image {
-            transform: scale(1.05);
+            transform: scale(1.05);            /* 호버 시 이미지 확대 */
         }
 
+        /* 슬라이더 캡션 오버레이 */
         .slider-caption {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
+            /* 위쪽으로 그라데이션 되는 반투명 배경 */
             background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
             padding: 2rem;
             backdrop-filter: blur(5px);
@@ -408,6 +444,7 @@
             color: var(--text-secondary);
         }
 
+        /* 슬라이더 네비게이션 */
         .slider-nav {
             position: absolute;
             bottom: 1rem;
@@ -436,21 +473,21 @@
             box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
         }
 
-        /* 프로그레스 인디케이터 추가 */
+        /* 슬라이더 프로그레스 인디케이터 */
         .slider-progress {
             position: absolute;
             bottom: 0;
             left: 0;
             height: 4px;
             background: var(--gradient-accent);
-            transition: width 5s linear;
+            transition: width 5s linear;       /* 자동 슬라이드 진행상황 표시 */
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
         }
 
-        /* 뉴스 그리드 개선 */
+        /* === 뉴스 그리드 === */
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* 반응형 그리드 */
             gap: 2rem;
             margin-bottom: 3rem;
         }
@@ -466,6 +503,7 @@
             backdrop-filter: blur(10px);
         }
 
+        /* 뉴스 카드 발광 효과 */
         .news-card::before {
             content: '';
             position: absolute;
@@ -495,8 +533,9 @@
             opacity: 1;
         }
 
+        /* 뉴스 이미지 */
         .news-image {
-            aspect-ratio: 16/10;
+            aspect-ratio: 16/10;               /* 16:10 비율 유지 */
             position: relative;
             overflow: hidden;
         }
@@ -512,6 +551,7 @@
             transform: scale(1.1);
         }
 
+        /* 뉴스 카드 콘텐츠 */
         .news-card-content {
             padding: 1.5rem;
             position: relative;
@@ -561,10 +601,30 @@
             color: var(--text-secondary);
             line-height: 1.5;
             margin-bottom: 1rem;
+            /* 텍스트 넘침 처리: 3줄까지만 표시 */
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+
+        /* 뉴스 키워드 */
+        .news-keywords {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .news-keyword {
+            background: rgba(0, 102, 204, 0.2);
+            backdrop-filter: blur(5px);
+            color: var(--accent-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(0, 212, 255, 0.3);
         }
 
         .news-card-footer {
@@ -577,6 +637,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* 상세보기 버튼 */
         .detail-btn {
             padding: 0.5rem 1rem;
             background: var(--gradient-primary);
@@ -611,7 +672,18 @@
             left: 100%;
         }
 
-        /* 랭킹 섹션 개선 */
+        /* 카드 링크: 전체 카드를 클릭 가능하게 만드는 오버레이 */
+        .card-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            text-decoration: none;
+        }
+
+        /* === 랭킹 섹션 === */
         .news-ranking {
             margin-top: 3rem;
         }
@@ -635,6 +707,7 @@
             backdrop-filter: blur(10px);
         }
 
+        /* 랭킹 아이템 발광 효과 */
         .ranking-item::before {
             content: '';
             position: absolute;
@@ -653,7 +726,7 @@
         }
 
         .ranking-item:hover {
-            transform: translateX(10px);
+            transform: translateX(10px);       /* 호버 시 오른쪽으로 이동 */
             box-shadow: 
                 0 10px 30px rgba(0, 0, 0, 0.3),
                 0 0 20px rgba(0, 102, 204, 0.2);
@@ -664,6 +737,7 @@
             opacity: 1;
         }
 
+        /* 랭킹 번호 */
         .ranking-number {
             font-size: 1.5rem;
             font-weight: bold;
@@ -708,7 +782,7 @@
             margin-top: 0.5rem;
         }
 
-        /* IT 밈 섹션 완전 개선 */
+        /* === IT 밈 섹션 === */
         .it-meme-section {
             margin-top: 3rem;
             background: linear-gradient(135deg, 
@@ -727,6 +801,7 @@
             overflow: hidden;
         }
 
+        /* IT 밈 섹션 배경 효과 */
         .it-meme-section::before {
             content: '';
             position: absolute;
@@ -767,6 +842,7 @@
             border-color: var(--accent-color);
         }
 
+        /* 밈 변경 버튼 */
         .meme-button {
             background: var(--gradient-primary);
             color: white;
@@ -814,10 +890,10 @@
         }
 
         .meme-button:hover i {
-            transform: rotate(180deg);
+            transform: rotate(180deg);          /* 호버 시 아이콘 회전 */
         }
 
-        /* 섹션 제목 개선 */
+        /* === 섹션 제목 === */
         .section-title {
             font-size: 2rem;
             font-weight: 700;
@@ -827,6 +903,7 @@
             padding-left: 2rem;
         }
 
+        /* 섹션 제목 왼쪽 장식 바 */
         .section-title::before {
             content: '';
             position: absolute;
@@ -839,6 +916,7 @@
             box-shadow: 0 0 15px rgba(0, 102, 204, 0.5);
         }
 
+        /* 섹션 제목 아래 장식 선 */
         .section-title::after {
             content: '';
             position: absolute;
@@ -851,7 +929,7 @@
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
         }
 
-        /* 로딩 스켈레톤 애니메이션 개선 */
+        /* === 로딩 스켈레톤 애니메이션 === */
         @keyframes shimmer {
             0% {
                 background-position: -200px 0;
@@ -880,7 +958,7 @@
             border-radius: 8px;
         }
 
-        /* 푸터 개선 */
+        /* === 푸터 === */
         .site-footer {
             background: linear-gradient(135deg, var(--bg-dark) 0%, #050505 100%);
             padding: 3rem 0 2rem;
@@ -964,7 +1042,7 @@
             color: #555555;
         }
 
-        /* 반응형 디자인 개선 */
+        /* === 반응형 디자인 === */
         @media (max-width: 768px) {
             .container {
                 padding: 0 0.75rem;
@@ -979,7 +1057,7 @@
             }
 
             .category-menu {
-                display: none;
+                display: none;               /* 모바일에서 카테고리 메뉴 숨김 */
             }
 
             .category-wrapper {
@@ -1074,7 +1152,7 @@
             }
         }
 
-        /* 추가 애니메이션과 인터랙션 */
+        /* === 추가 애니메이션과 인터랙션 === */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -1123,7 +1201,7 @@
             cursor: pointer;
         }
 
-        /* 스크롤바 커스터마이징 */
+        /* === 커스텀 스크롤바 === */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -1150,10 +1228,13 @@
             <div class="nav-wrapper">
                 <div class="nav-left">
                     <div class="main-nav">
+                        <!-- 로고와 브랜드명 -->
                         <a class="nav-logo" th:href="@{/}">
                             <img src="/logo/logo.png" alt="로고" style="height:2.2rem; vertical-align:middle; margin-right:0.5rem;">
                         </a>
                         <a class="nav-brand" th:href="@{/}">CuraT</a>
+                        
+                        <!-- 카테고리 메뉴 -->
                         <div class="category-menu">
                             <a class="category-item" th:href="@{/category/AI}">AI</a>
                             <a class="category-item" th:href="@{/category/하드웨어}">하드웨어</a>
@@ -1163,11 +1244,13 @@
                     </div>
                 </div>
                 
+                <!-- 네비게이션 오른쪽: 기능 버튼들 -->
                 <div class="nav-right">
                     <a class="icon-button" th:href="@{/analytics}">
                         <i class="fas fa-chart-bar"></i>
                     </a>
                     <span class="divider">|</span>
+                    <!-- 로그인 상태에 따른 조건부 렌더링 -->
                     <a class="nav-button" th:if="${isLoggedIn}" th:href="@{/auth/logout}">
                         로그아웃
                     </a>
@@ -1183,7 +1266,7 @@
         </div>
     </nav>
 
-    <!-- 카테고리 내비게이션 -->
+    <!-- 카테고리 내비게이션: 추가 메뉴와 검색 기능 -->
     <div class="category-nav">
         <div class="container">
             <div class="category-wrapper">
@@ -1192,11 +1275,13 @@
                     <a class="nav-item" th:href="@{/#ranking}">랭킹</a>
                     <a class="nav-item" th:href="@{/category/전체?sort=latest}">최신</a>
                     <a class="nav-item" th:href="@{/category/전체?sort=views}">인기</a>
-                    <!-- NEW: 타임라인 버튼 추가 -->
+                    <!-- 타임라인 버튼: 특별한 스타일 적용 -->
                     <a class="nav-item timeline-btn" th:href="@{/timeline}">
                         <i class="fas fa-clock"></i>타임라인
                     </a>
                 </div>
+                
+                <!-- 검색 폼 -->
                 <form action="/search" method="get" class="search-box">
                     <input type="text" name="query" placeholder="키워드로 뉴스 검색...">
                     <button type="submit" class="search-button">
@@ -1207,17 +1292,23 @@
         </div>
     </div>
 
-    <!-- 메인 컨텐츠 영역 -->
+    <!-- 메인 콘텐츠 영역 -->
     <main class="main-content">
         <div class="container">
             <!-- 메인 페이지 컨텐츠 -->
             <div id="home-page" class="page active">
-                <!-- 메인 슬라이더 (헤드라인 뉴스) -->
+                
+                <!-- 메인 슬라이더: 헤드라인 뉴스 섹션 -->
                 <div class="main-slider" th:if="${headlineNews != null and not #lists.isEmpty(headlineNews)}">
                     <div class="slider-container" id="slider-container">
-                        <!-- 슬라이더 아이템 동적 반복 -->
+                        <!-- 헤드라인 뉴스들을 슬라이더로 표시 -->
                         <div th:each="headline, status : ${headlineNews}" class="slider-item">
-                            <img class="slider-image" th:src="${headline.urlToImage != null ? headline.urlToImage : '/images/placeholder.jpg'}" th:alt="${headline.title}">
+                            <!-- 헤드라인 뉴스 이미지 -->
+                            <img class="slider-image" 
+                                 th:src="${headline.urlToImage != null ? headline.urlToImage : '/images/placeholder.jpg'}" 
+                                 th:alt="${headline.title}">
+                            
+                            <!-- 슬라이드 캡션 오버레이 -->
                             <div class="slider-caption">
                                 <span class="slider-category" th:text="${headline.category}">카테고리</span>
                                 <h2 class="slider-title" th:text="${headline.title}">뉴스 제목</h2>
@@ -1230,7 +1321,7 @@
                         </div>
                     </div>
                     
-                    <!-- 슬라이더 네비게이션 -->
+                    <!-- 슬라이더 네비게이션 도트 -->
                     <div class="slider-nav">
                         <div th:each="dot, status : ${headlineNews}" 
                              th:class="${status.index == 0} ? 'slider-dot active' : 'slider-dot'" 
@@ -1238,7 +1329,7 @@
                         </div>
                     </div>
                     
-                    <!-- 프로그레스 바 -->
+                    <!-- 자동 슬라이드 프로그레스 바 -->
                     <div class="slider-progress" id="slider-progress"></div>
                 </div>
                 
@@ -1250,17 +1341,21 @@
                     </div>
                 </div>
                 
-                <!-- 추천 뉴스 -->
+                <!-- 추천 뉴스 섹션 -->
                 <div class="recommended-news" th:if="${not #lists.isEmpty(recommendedNews)}">
                     <h2 class="section-title">추천 뉴스</h2>
                     <div class="news-grid">
-                        <!-- 추천 뉴스 항목 -->
+                        <!-- 추천 뉴스 카드들 -->
                         <div class="news-card animate-fadeInUp" th:each="news : ${recommendedNews}">
+                            <!-- 뉴스 이미지 -->
                             <div class="news-image">
                                 <img th:src="${news.urlToImage != null ? news.urlToImage : '/images/placeholder.jpg'}" 
                                      th:alt="${news.title}">
                             </div>
+                            
+                            <!-- 뉴스 카드 콘텐츠 */
                             <div class="news-card-content">
+                                <!-- 카드 헤더: 카테고리와 조회수 -->
                                 <div class="news-card-header">
                                     <span class="news-category" th:text="${news.category}">카테고리</span>
                                     <div class="news-views-small">
@@ -1268,23 +1363,27 @@
                                         <span th:text="${news.views}">0</span>
                                     </div>
                                 </div>
+                                
+                                <!-- 뉴스 제목 -->
                                 <h3 class="news-card-title" th:text="${news.title}">뉴스 제목</h3>
+                                <!-- 뉴스 설명 -->
                                 <p class="news-description" th:text="${news.description}">뉴스 설명</p>
                                 
-                                <!-- 깔끔한 해시태그(키워드) 표시 -->
+                                <!-- 뉴스 키워드 해시태그 -->
                                 <div class="news-keywords" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                     <span th:each="keyword : ${news.keywords}" 
                                           th:text="'#' + ${keyword}" 
-                                          class="news-keyword"
-                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
+                                          class="news-keyword"></span>
                                 </div>
                                 
+                                <!-- 카드 푸터: 출처, 날짜, 상세보기 버튼 -->
                                 <div class="news-card-footer">
                                     <div>
                                         <span th:text="${news.sourceName}">출처</span>
                                         <span> • </span>
                                         <span th:text="${#temporals.format(news.publishedAt, 'yyyy-MM-dd')}">날짜</span>
                                     </div>
+                                    <!-- 상세보기 버튼: 클릭 추적 기능 포함 -->
                                     <a th:href="${news.url}" target="_blank" class="detail-btn js-record-click"
                                     th:data-title="|[[${news.title}]]|"
                                     th:data-category="|[[${news.category}]]|"
@@ -1294,6 +1393,8 @@
                                     </a>
                                 </div>
                             </div>
+                            
+                            <!-- 전체 카드를 클릭 가능하게 만드는 링크 오버레이 -->
                             <a th:href="${news.url}" target="_blank" class="card-link js-record-click"
                             th:data-title="|[[${news.title}]]|"
                             th:data-category="|[[${news.category}]]|"
@@ -1302,10 +1403,11 @@
                     </div>
                 </div>
                 
-                <!-- 추천 뉴스가 없을 때 대체 콘텐츠 -->
+                <!-- 추천 뉴스가 없을 때 로딩 스켈레톤 표시 -->
                 <div class="recommended-news-placeholder" th:if="${#lists.isEmpty(recommendedNews)}">
                     <h2 class="section-title">추천 뉴스</h2>
                     <div class="news-grid">
+                        <!-- 3개의 스켈레톤 카드 -->
                         <div class="placeholder-card" th:each="i : ${#numbers.sequence(1, 3)}">
                             <div class="placeholder-image"></div>
                             <div class="news-card-content">
@@ -1318,24 +1420,27 @@
                     </div>
                 </div>
                 
-                <!-- 조회수 순위 -->
+                <!-- 조회수 순위 섹션 -->
                 <div id="ranking" class="news-ranking" th:if="${topViewedNews != null and not #lists.isEmpty(topViewedNews)}">
                     <h2 class="section-title">조회수 순위</h2>
                     <div class="ranking-list">
-                        <!-- 랭킹 뉴스 항목 -->
+                        <!-- 랭킹 뉴스 아이템들 -->
                         <div class="ranking-item animate-fadeInLeft" th:each="news, stat : ${topViewedNews}">
+                            <!-- 랭킹 번호 -->
                             <div class="ranking-number" th:text="${stat.count}">1</div>
+                            
+                            <!-- 랭킹 콘텐츠 -->
                             <div class="ranking-content">
                                 <h3 class="ranking-title" th:text="${news.title}">뉴스 제목</h3>
                                 
-                                <!-- 깔끔한 해시태그(키워드) 표시 -->
+                                <!-- 키워드 해시태그 -->
                                 <div class="news-keywords" style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                     <span th:each="keyword : ${news.keywords}" 
                                           th:text="'#' + ${keyword}" 
-                                          class="news-keyword"
-                                          style="background: rgba(0, 102, 204, 0.2); backdrop-filter: blur(5px); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(0, 212, 255, 0.3);"></span>
+                                          class="news-keyword"></span>
                                 </div>
                                 
+                                <!-- 랭킹 푸터: 출처, 조회수, 상세보기 버튼 -->
                                 <div class="ranking-footer">
                                     <div>
                                         <span th:text="${news.sourceName}">출처</span>
@@ -1354,6 +1459,8 @@
                                     </a>
                                 </div>
                             </div>
+                            
+                            <!-- 전체 아이템을 클릭 가능하게 만드는 링크 오버레이 */
                             <a th:href="${news.url}" target="_blank" class="card-link js-record-click"
                             th:data-title="|[[${news.title}]]|"
                             th:data-category="|[[${news.category}]]|"
@@ -1362,10 +1469,11 @@
                     </div>
                 </div>
                 
-                <!-- 조회수 순위가 없을 때 대체 콘텐츠 -->
+                <!-- 조회수 순위가 없을 때 스켈레톤 표시 -->
                 <div id="ranking" class="news-ranking" th:if="${topViewedNews == null or #lists.isEmpty(topViewedNews)}">
                     <h2 class="section-title">조회수 순위</h2>
                     <div class="ranking-list">
+                        <!-- 5개의 스켈레톤 랭킹 아이템 -->
                         <div class="placeholder-item" th:each="i : ${#numbers.sequence(1, 5)}">
                             <div class="ranking-number" th:text="${i}">1</div>
                             <div class="ranking-content">
@@ -1376,11 +1484,16 @@
                     </div>
                 </div>
                 
-                <!-- IT 밈 섹션 -->
+                <!-- IT 밈 섹션: 사용자 인터랙션을 위한 재미 요소 -->
                 <div class="it-meme-section animate-float">
                     <div class="meme-container">
                         <h2 class="section-title">오늘의 IT 밈</h2>
-                        <img id="meme-image" th:src="${currentMeme != null ? currentMeme : '/memes/meme1.png'}" alt="IT 밈" class="meme-image">
+                        <!-- 현재 표시되는 밈 이미지 -->
+                        <img id="meme-image" 
+                             th:src="${currentMeme != null ? currentMeme : '/memes/meme1.png'}" 
+                             alt="IT 밈" 
+                             class="meme-image">
+                        <!-- 밈 변경 버튼 -->
                         <button id="meme-button" class="meme-button">
                             <i class="fas fa-sync-alt"></i>
                             다른 밈 보기
@@ -1395,6 +1508,7 @@
     <footer class="site-footer">
         <div class="container">
             <div class="footer-grid">
+                <!-- 브랜드 정보 -->
                 <div class="footer-column">
                     <h3 class="footer-title">CuraT</h3>
                     <p class="footer-text">
@@ -1402,6 +1516,8 @@
                         AI 기반 큐레이션으로 개인화된 뉴스를 제공합니다.
                     </p>
                 </div>
+                
+                <!-- 고객 센터 정보 -->
                 <div class="footer-column">
                     <h3 class="footer-title">고객 센터</h3>
                     <ul class="footer-list">
@@ -1410,6 +1526,8 @@
                         <li><i class="fas fa-clock"></i> 운영시간: 평일 9:00 - 18:00</li>
                     </ul>
                 </div>
+                
+                <!-- 서비스 안내 -->
                 <div class="footer-column">
                     <h3 class="footer-title">서비스 안내</h3>
                     <ul class="footer-list">
@@ -1419,6 +1537,8 @@
                         <li><i class="fas fa-bullhorn"></i> 공지사항</li>
                     </ul>
                 </div>
+                
+                <!-- 소셜 미디어 -->
                 <div class="footer-column">
                     <h3 class="footer-title">소셜 미디어</h3>
                     <div class="social-buttons">
@@ -1437,64 +1557,86 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- 푸터 하단 -->
             <div class="footer-bottom">
                 <p>© 2025 CuraT News Curation. All rights reserved. | Made with ❤️ for tech enthusiasts</p>
             </div>
         </div>
     </footer>
 
+    <!-- JavaScript 코드 -->
     <script th:inline="javascript">
         
-        // IT 밈 기능 개선
+        /**
+         * IT 밈 기능 구현
+         * 사용자가 버튼을 클릭하면 새로운 밈 이미지를 랜덤하게 표시
+         */
         const memeButton = document.getElementById('meme-button');
         const memeImage = document.getElementById('meme-image');
         
         if(memeButton && memeImage) {
+            // 사용 가능한 밈 이미지 목록
             const MEMES = [
               '/memes/meme1.png', '/memes/meme2.png', '/memes/meme3.png', '/memes/meme4.png', '/memes/meme5.png',
               '/memes/meme6.png', '/memes/meme7.png', '/memes/meme8.png', '/memes/meme9.png', '/memes/meme10.png',
               '/memes/meme11.png', '/memes/meme12.png', '/memes/meme13.png', '/memes/meme14.png', '/memes/meme15.png',
               '/memes/meme16.png', '/memes/meme17.png', '/memes/meme18.png', '/memes/meme19.png', '/memes/meme20.png'
             ];
+            
+            // 최근에 표시된 밈들을 기록하여 중복 방지
             let recentMemes = [];
             
+            /**
+             * 중복되지 않는 랜덤 밈 선택 함수
+             * @returns {string} 선택된 밈 이미지 경로
+             */
             function getRandomMeme() {
+                // 최근에 보여준 밈을 제외한 후보들
                 const candidates = MEMES.filter(meme => !recentMemes.includes(meme));
                 let meme;
+                
                 if (candidates.length === 0) {
+                    // 모든 밈을 다 봤으면 기록 초기화
                     recentMemes = [];
                     meme = MEMES[Math.floor(Math.random() * MEMES.length)];
                 } else {
+                    // 아직 안 본 밈 중에서 랜덤 선택
                     meme = candidates[Math.floor(Math.random() * candidates.length)];
                 }
+                
+                // 최근 밈 목록에 추가 (최대 10개까지 기록)
                 recentMemes.push(meme);
                 if (recentMemes.length > 10) recentMemes.shift();
+                
                 return meme;
             }
             
+            // 밈 변경 버튼 클릭 이벤트
             memeButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                // 버튼 비활성화 및 로딩 상태
+                // 버튼 비활성화 및 로딩 상태 표시
                 memeButton.disabled = true;
                 memeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 로딩중...';
                 memeButton.style.transform = 'scale(0.95)';
                 
-                // 이미지 페이드 아웃
+                // 이미지 페이드 아웃 효과
                 memeImage.style.opacity = '0';
                 memeImage.style.transform = 'scale(0.9)';
                 
+                // 800ms 후 새 밈으로 교체
                 setTimeout(() => {
                     const newMeme = getRandomMeme();
                     memeImage.src = newMeme;
                     memeImage.alt = `IT 밈 - ${Math.floor(Math.random() * 1000)}`;
                     
-                    // 이미지 로드 완료 후 페이드 인
+                    // 이미지 로드 완료 후 페이드 인 효과
                     memeImage.onload = () => {
                         memeImage.style.opacity = '1';
                         memeImage.style.transform = 'scale(1)';
                         
-                        // 버튼 복원
+                        // 버튼 상태 복원
                         memeButton.disabled = false;
                         memeButton.innerHTML = '<i class="fas fa-sync-alt"></i> 다른 밈 보기';
                         memeButton.style.transform = 'scale(1)';
@@ -1502,7 +1644,7 @@
                 }, 800);
             });
             
-            // 키보드 접근성
+            // 키보드 접근성: 엔터키와 스페이스바로도 버튼 동작
             memeButton.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -1511,30 +1653,34 @@
             });
         }
         
-        // 페이지 로드 시 요소들 순차적으로 나타나는 애니메이션 개선
+        /**
+         * 페이지 로드 시 초기화 및 애니메이션 처리
+         */
         document.addEventListener('DOMContentLoaded', function() {
-            // Intersection Observer로 스크롤 애니메이션
+            
+            // Intersection Observer로 스크롤 기반 애니메이션 구현
             const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+                threshold: 0.1,                 /* 요소가 10% 보일 때 애니메이션 시작 */
+                rootMargin: '0px 0px -50px 0px' /* 하단 50px 여유 공간 */
             };
             
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
                     if (entry.isIntersecting) {
-                        // 지연을 두고 순차적으로 애니메이션
+                        // 순차적으로 나타나는 애니메이션 (100ms 간격)
                         setTimeout(() => {
                             entry.target.style.opacity = '1';
                             entry.target.style.transform = 'translateY(0)';
                             entry.target.classList.add('animate-fadeInUp');
                         }, index * 100);
                         
+                        // 한 번 애니메이션되면 관찰 중단 (성능 최적화)
                         observer.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
             
-            // 애니메이션 대상 요소들 관찰
+            // 애니메이션 대상 요소들 선택 및 초기 상태 설정
             const animateElements = document.querySelectorAll('.news-card, .ranking-item');
             animateElements.forEach((el, index) => {
                 el.style.opacity = '0';
@@ -1544,7 +1690,7 @@
                 observer.observe(el);
             });
             
-            // 네비게이션 항목 호버 효과
+            // 네비게이션 항목 호버 효과 개선
             const navItems = document.querySelectorAll('.nav-item, .category-item');
             navItems.forEach(item => {
                 item.addEventListener('mouseenter', function() {
@@ -1564,7 +1710,7 @@
                 });
             }
             
-            // 스무스 스크롤
+            // 스무스 스크롤: 앵커 링크 클릭 시 부드럽게 이동
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -1584,35 +1730,61 @@
             }, 100);
         });
         
-        // 성능 최적화: 스크롤 이벤트 디바운싱
+        /**
+         * 성능 최적화: 스크롤 이벤트 디바운싱
+         * 스크롤 이벤트가 너무 자주 발생하지 않도록 제한
+         */
         let scrollTimeout;
         window.addEventListener('scroll', function() {
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(function() {
                 // 스크롤 기반 추가 효과들을 여기에 추가할 수 있음
+                // 예: 네비게이션 바 숨김/표시, 진행률 표시 등
             }, 100);
         });
         
-        // 에러 핸들링
+        /**
+         * 전역 에러 핸들링: 이미지 로드 실패 시 기본 이미지로 대체
+         */
         window.addEventListener('error', function(e) {
             console.warn('이미지 로드 실패:', e.target.src);
             if (e.target.tagName === 'IMG') {
                 e.target.src = '/images/placeholder.jpg';
+                e.target.alt = '이미지를 불러올 수 없습니다';
             }
         });
         
-        // 페이지 가시성 API로 자동 슬라이드 제어
+        /**
+         * 페이지 가시성 API를 활용한 자동 슬라이드 제어
+         * 사용자가 다른 탭으로 이동하면 자동 슬라이드 일시정지
+         */
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
-                clearInterval(slideInterval);
-            } else if (slideCount > 0) {
-                resetAutoSlide();
+                // 페이지가 숨겨지면 자동 슬라이드 정지
+                if (typeof slideInterval !== 'undefined') {
+                    clearInterval(slideInterval);
+                }
+            } else {
+                // 페이지가 다시 보이면 자동 슬라이드 재시작
+                if (typeof slideCount !== 'undefined' && slideCount > 0) {
+                    resetAutoSlide();
+                }
             }
         });
     </script>
+    
+    <!-- 사용자 클릭 추적 기능 스크립트 -->
     <script th:inline="javascript">
+        // 클릭 기록 API 엔드포인트
         const RECORD_URL = '/user-articles/record';
         
+        /**
+         * 뉴스 클릭 기록 함수
+         * 사용자의 뉴스 읽기 패턴 분석을 위한 데이터 수집
+         * @param {string} title - 뉴스 제목
+         * @param {string} category - 뉴스 카테고리
+         * @param {string} keywords - 뉴스 키워드
+         */
         function recordClick(title, category, keywords) {
             fetch(RECORD_URL, {
                 method: 'POST',
@@ -1624,20 +1796,25 @@
                     articleCategory: category,
                     keywords: keywords
                 })
-            }).catch(console.error);
+            }).catch(console.error); // 에러는 조용히 처리
         }
         
+        // DOM 로드 완료 후 클릭 추적 이벤트 리스너 등록
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.js-record-click').forEach(el => {
                 el.addEventListener('click', () => {
+                    // 데이터 속성에서 뉴스 정보 추출
                     const title    = el.dataset.title;
                     const category = el.dataset.category;
                     const keywords = el.dataset.keywords;
+                    // 클릭 기록 전송
                     recordClick(title, category, keywords);
                 });
             });
         });
-        </script>
+    </script>
+    
+    <!-- 로그아웃 확인 대화상자 스크립트 -->
     <script th:src="@{/js/quitLogout.js}"></script>
 </body>
 </html>
