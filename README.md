@@ -1,4 +1,4 @@
-# NewsCurator
+# newscurator
 
 AI 및 IT 관련 뉴스를 자동으로 수집하고 카테고리별로 제공하는 웹 서비스입니다.
 
@@ -64,3 +64,4 @@ mvn clean install
 mvn spring-boot:run
 
 ```
+
